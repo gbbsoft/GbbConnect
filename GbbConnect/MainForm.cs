@@ -93,15 +93,22 @@ namespace GbbConnect
 
                         Log($"Plant: {itm.Name}");
                         var driver = new ModbusTCP.Master(itm.AddressIP, (ushort)itm.PortNo);
+                        driver.OnException += Driver_OnException;
+                        try
+                        {
 
-                        byte[] answer = { 0, 66 };
-                        //driver.WriteMultipleRegister(0, 1, 184, answer);
+                            byte[] answer = { 0, 66 };
+                            //driver.WriteMultipleRegister(0, 1, 184, answer);
 
-                        driver.ReadHoldingRegister(0, 1, 184, 1, ref answer);
+                            driver.ReadHoldingRegister(0, 1, 184, 1, ref answer);
 
-                        Log($"SOC: {answer[0]*256 + answer[1]}");
+                            Log($"SOC: {answer[0] * 256 + answer[1]}");
+                        }
+                        finally
+                        {
+                            driver.disconnect();
+                        }
 
-                        driver.disconnect();
                     }
                     GbbLibWin.Log.LogMsgBox(this, "Done");
 
@@ -113,9 +120,86 @@ namespace GbbConnect
             }
         }
 
+        private void Driver_OnException(ushort id, byte unit, byte function, byte exception)
+        {
+            throw new ApplicationException($"Exceeption from driver: function: {function}, exception: {exception}");
+        }
+
         private void Log(string message)
         {
             this.TestLog_textBox.AppendText($"{DateTime.Now}: {message}\r\n");
+        }
+
+        private void TestSolarmanV5_button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.ValidateChildren();
+                if (GbbLibWin.Log.LogMsgBox(this, "Do you want to start connection test?", MessageBoxButtons.YesNo, DialogResult.Yes, Microsoft.Extensions.Logging.LogLevel.Information) == DialogResult.Yes)
+                {
+                    foreach (var itm in Program.Parameters.Plants)
+                    {
+
+                        Log($"Plant: {itm.Name}");
+                        var driver = new Drivers.SolarmanV5.SolarmanV5Driver(itm.AddressIP, itm.PortNo, itm.SerialNumber);
+                        try
+                        {
+
+
+                            byte[] answer = { 0, 66 };
+                            //driver.WriteMultipleRegister(0, 1, 184, answer);
+
+                            answer = driver.ReadHoldingRegister(0, 184, 1, this.TestLog_textBox);
+
+                            Log($"SOC: {answer[0] * 256 + answer[1]}");
+                        }
+                        finally
+                        {
+                            driver.Dispose();
+                        }
+
+                    }
+                    GbbLibWin.Log.LogMsgBox(this, "Done");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
+        }
+
+        private void Search_button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.ValidateChildren();
+                if (GbbLibWin.Log.LogMsgBox(this, "Do you want to search for SolarmanV5?", MessageBoxButtons.YesNo, DialogResult.Yes, Microsoft.Extensions.Logging.LogLevel.Information) == DialogResult.Yes)
+                {
+
+                    Log($"{DateTime.Now}: Start search (5 sec)");
+                    var ll =Drivers.SolarmanV5.SolarmanV5Driver.OurSearchSolarman();
+                    
+                    Log($"{DateTime.Now}: Result: (IpAddress, MAC address, SerialNo)");
+                    if (ll.Count == 0)
+                        Log("Nothing found...");
+                    else
+                    {
+                        Log($"==========================");
+                        foreach (var itm in ll)
+                        {
+                            Log(itm);
+                        }
+                        Log($"==========================");
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
         }
     }
 }

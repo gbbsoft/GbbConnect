@@ -34,19 +34,23 @@
             tabPage1 = new TabPage();
             bindingNavigator2 = new GbbLibWin.BindingNavigator();
             groupBox1 = new GroupBox();
-            textBox2 = new TextBox();
+            textBox3 = new TextBox();
             plantsBindingSource = new BindingSource(components);
             ParametersBindingSource = new BindingSource(components);
+            label3 = new Label();
+            textBox1 = new TextBox();
+            label1 = new Label();
+            textBox2 = new TextBox();
             label4 = new Label();
             label2 = new Label();
             Plants_DataGridView = new GbbLibWin.OurDataGridView();
             nameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
+            TestSolarmanV5_button = new Button();
             TestLog_textBox = new TextBox();
             TestConnections_button = new Button();
             Save_button = new Button();
-            textBox1 = new TextBox();
-            label1 = new Label();
+            Search_button = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -92,6 +96,8 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(textBox3);
+            groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(textBox1);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(textBox2);
@@ -103,13 +109,13 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "System:";
             // 
-            // textBox2
+            // textBox3
             // 
-            textBox2.DataBindings.Add(new Binding("Text", plantsBindingSource, "AddressIP", true));
-            textBox2.Location = new Point(174, 22);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(178, 23);
-            textBox2.TabIndex = 3;
+            textBox3.DataBindings.Add(new Binding("Text", plantsBindingSource, "SerialNumber", true));
+            textBox3.Location = new Point(174, 80);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(178, 23);
+            textBox3.TabIndex = 7;
             // 
             // plantsBindingSource
             // 
@@ -119,6 +125,40 @@
             // ParametersBindingSource
             // 
             ParametersBindingSource.DataSource = typeof(Configuration.Parameters);
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(5, 83);
+            label3.Name = "label3";
+            label3.Size = new Size(114, 15);
+            label3.TabIndex = 6;
+            label3.Text = "Serial number (SN)*:";
+            // 
+            // textBox1
+            // 
+            textBox1.DataBindings.Add(new Binding("Text", plantsBindingSource, "PortNo", true));
+            textBox1.Location = new Point(174, 51);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(178, 23);
+            textBox1.TabIndex = 5;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(5, 54);
+            label1.Name = "label1";
+            label1.Size = new Size(82, 15);
+            label1.TabIndex = 4;
+            label1.Text = "Port number*:";
+            // 
+            // textBox2
+            // 
+            textBox2.DataBindings.Add(new Binding("Text", plantsBindingSource, "AddressIP", true));
+            textBox2.Location = new Point(174, 22);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(178, 23);
+            textBox2.TabIndex = 3;
             // 
             // label4
             // 
@@ -163,6 +203,8 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(Search_button);
+            tabPage2.Controls.Add(TestSolarmanV5_button);
             tabPage2.Controls.Add(TestLog_textBox);
             tabPage2.Controls.Add(TestConnections_button);
             tabPage2.Location = new Point(4, 24);
@@ -172,6 +214,16 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Tests";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // TestSolarmanV5_button
+            // 
+            TestSolarmanV5_button.Location = new Point(155, 6);
+            TestSolarmanV5_button.Name = "TestSolarmanV5_button";
+            TestSolarmanV5_button.Size = new Size(143, 23);
+            TestSolarmanV5_button.TabIndex = 2;
+            TestSolarmanV5_button.Text = "Test SolarmanV5";
+            TestSolarmanV5_button.UseVisualStyleBackColor = true;
+            TestSolarmanV5_button.Click += TestSolarmanV5_button_Click;
             // 
             // TestLog_textBox
             // 
@@ -188,7 +240,7 @@
             TestConnections_button.Name = "TestConnections_button";
             TestConnections_button.Size = new Size(143, 23);
             TestConnections_button.TabIndex = 0;
-            TestConnections_button.Text = "Test connections";
+            TestConnections_button.Text = "Test ModBusTCP";
             TestConnections_button.UseVisualStyleBackColor = true;
             TestConnections_button.Click += TestConnections_button_Click;
             // 
@@ -202,22 +254,15 @@
             Save_button.UseVisualStyleBackColor = true;
             Save_button.Click += Save_button_Click;
             // 
-            // textBox1
+            // Search_button
             // 
-            textBox1.DataBindings.Add(new Binding("Text", plantsBindingSource, "PortNo", true));
-            textBox1.Location = new Point(174, 51);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(178, 23);
-            textBox1.TabIndex = 5;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(5, 54);
-            label1.Name = "label1";
-            label1.Size = new Size(82, 15);
-            label1.TabIndex = 4;
-            label1.Text = "Port number*:";
+            Search_button.Location = new Point(304, 6);
+            Search_button.Name = "Search_button";
+            Search_button.Size = new Size(143, 23);
+            Search_button.TabIndex = 3;
+            Search_button.Text = "Search for SolarmanV5";
+            Search_button.UseVisualStyleBackColor = true;
+            Search_button.Click += Search_button_Click;
             // 
             // MainForm
             // 
@@ -263,5 +308,9 @@
         private DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private TextBox textBox1;
         private Label label1;
+        private Button TestSolarmanV5_button;
+        private TextBox textBox3;
+        private Label label3;
+        private Button Search_button;
     }
 }

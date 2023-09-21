@@ -14,7 +14,10 @@ namespace GbbConnect.Configuration
         private string m_AddressIP = "";
 
         [ObservableProperty]
-        private int m_PortNo = 8899;
+        private int m_PortNo = 502;
+
+        [ObservableProperty]
+        private long m_SerialNumber = 502;
 
         [ObservableProperty]
         private string? m_Password;
@@ -60,6 +63,7 @@ namespace GbbConnect.Configuration
             xml.WriteAttributeString("Name", Name);
             xml.WriteAttributeString("AddressIP", AddressIP);
             xml.WriteAttributeString("PortNo", PortNo.ToString());
+            xml.WriteAttributeString("SerialNumber", SerialNumber.ToString());
             if (Password != null)
                 xml.WriteAttributeString("Password", GbbLib.Encryption.AES_Encrypt(cipher, IV, Password));
             xml.WriteAttributeString("Cerbo_UseVRMConn", XmlConvert.ToString(Cerbo_UseVRMConn));
@@ -85,6 +89,7 @@ namespace GbbConnect.Configuration
 
                 string? s;
                 int i;
+                long l;
 
                 ret.Name = xml.GetAttribute("Name") ?? "";
                 ret.AddressIP= xml.GetAttribute("AddressIP") ?? "";
@@ -95,6 +100,9 @@ namespace GbbConnect.Configuration
                 s = xml.GetAttribute("PortNo");
                 if (s != null && int.TryParse(s, out i))
                     ret.PortNo = i;
+                s = xml.GetAttribute("SerialNumber");
+                if (s != null && long.TryParse(s, out l))
+                    ret.SerialNumber = l;
                 s = xml.GetAttribute("Cerbo_UseVRMConn");
                 if (s != null)
                     ret.Cerbo_UseVRMConn = XmlConvert.ToBoolean(s);
