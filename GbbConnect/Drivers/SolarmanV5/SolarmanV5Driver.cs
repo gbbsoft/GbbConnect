@@ -201,10 +201,10 @@ namespace GbbConnect.Drivers.SolarmanV5
                     throw new ApplicationException("Connection Lost");
                 byte[] InBuf = new byte[bytesReceived];
                 Buffer.BlockCopy(buffer, 0, InBuf, 0, bytesReceived);
-                tb.AppendText($"{DateTime.Now}: Received: {BitConverter.ToString(OutBuf)}\r\n");
+                tb.AppendText($"{DateTime.Now}: Received: {BitConverter.ToString(InBuf)}\r\n");
 
                 Buf = Frame.GetModBusFrame(InBuf);
-                tb.AppendText($"{DateTime.Now}: Received ModBus: {BitConverter.ToString(OutBuf)}\r\n");
+                tb.AppendText($"{DateTime.Now}: Received ModBus: {BitConverter.ToString(Buf)}\r\n");
 
                 var crc = GetCRC(Buf);
                 if (crc[0] != Buf[Buf.Length-2]

@@ -99,14 +99,14 @@ namespace GbbConnect.Drivers.SolarmanV5
                 throw new ApplicationException("SolarmanV5: Wrong end byte");
 
             // checksum
-            UInt16 checksum = 0;
-            for (int i = 1; i < FrameLen-3; i++)
-            {
-                checksum = (UInt16)((checksum + Frame[i]) & 255);
-            }
-            checksum &= 255;
-            if (Frame[FrameLen-2] != checksum)
-                throw new ApplicationException("SolarmanV5: Wrong checksum");
+            // Źle działa z SofarSolar
+            //byte checksum = 0;
+            //for (int i = 1; i < FrameLen - 3; i++)
+            //{
+            //    checksum += Frame[i];
+            //}
+            //if (Frame[FrameLen - 2] != checksum)
+            //    throw new ApplicationException("SolarmanV5: Wrong checksum");
 
             if (Frame[3] != 0x10
               || Frame[4] != 0x15)

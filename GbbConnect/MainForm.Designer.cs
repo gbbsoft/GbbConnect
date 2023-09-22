@@ -46,11 +46,12 @@
             Plants_DataGridView = new GbbLibWin.OurDataGridView();
             nameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
+            RegisterNo_numericUpDown = new NumericUpDown();
+            Search_button = new Button();
             TestSolarmanV5_button = new Button();
             TestLog_textBox = new TextBox();
             TestConnections_button = new Button();
             Save_button = new Button();
-            Search_button = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -58,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)ParametersBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Plants_DataGridView).BeginInit();
             tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)RegisterNo_numericUpDown).BeginInit();
             SuspendLayout();
             // 
             // tabControl1
@@ -203,6 +205,7 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(RegisterNo_numericUpDown);
             tabPage2.Controls.Add(Search_button);
             tabPage2.Controls.Add(TestSolarmanV5_button);
             tabPage2.Controls.Add(TestLog_textBox);
@@ -215,13 +218,33 @@
             tabPage2.Text = "Tests";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // RegisterNo_numericUpDown
+            // 
+            RegisterNo_numericUpDown.Location = new Point(304, 6);
+            RegisterNo_numericUpDown.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            RegisterNo_numericUpDown.Name = "RegisterNo_numericUpDown";
+            RegisterNo_numericUpDown.Size = new Size(120, 23);
+            RegisterNo_numericUpDown.TabIndex = 4;
+            RegisterNo_numericUpDown.TextAlign = HorizontalAlignment.Center;
+            RegisterNo_numericUpDown.Value = new decimal(new int[] { 184, 0, 0, 0 });
+            // 
+            // Search_button
+            // 
+            Search_button.Location = new Point(430, 6);
+            Search_button.Name = "Search_button";
+            Search_button.Size = new Size(143, 23);
+            Search_button.TabIndex = 3;
+            Search_button.Text = "Search for SolarmanV5";
+            Search_button.UseVisualStyleBackColor = true;
+            Search_button.Click += Search_button_Click;
+            // 
             // TestSolarmanV5_button
             // 
             TestSolarmanV5_button.Location = new Point(155, 6);
             TestSolarmanV5_button.Name = "TestSolarmanV5_button";
             TestSolarmanV5_button.Size = new Size(143, 23);
             TestSolarmanV5_button.TabIndex = 2;
-            TestSolarmanV5_button.Text = "Test SolarmanV5";
+            TestSolarmanV5_button.Text = "Test SolarmanV5 - Reg:";
             TestSolarmanV5_button.UseVisualStyleBackColor = true;
             TestSolarmanV5_button.Click += TestSolarmanV5_button_Click;
             // 
@@ -254,16 +277,6 @@
             Save_button.UseVisualStyleBackColor = true;
             Save_button.Click += Save_button_Click;
             // 
-            // Search_button
-            // 
-            Search_button.Location = new Point(304, 6);
-            Search_button.Name = "Search_button";
-            Search_button.Size = new Size(143, 23);
-            Search_button.TabIndex = 3;
-            Search_button.Text = "Search for SolarmanV5";
-            Search_button.UseVisualStyleBackColor = true;
-            Search_button.Click += Search_button_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -286,6 +299,7 @@
             ((System.ComponentModel.ISupportInitialize)Plants_DataGridView).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)RegisterNo_numericUpDown).EndInit();
             ResumeLayout(false);
         }
 
@@ -312,5 +326,6 @@
         private TextBox textBox3;
         private Label label3;
         private Button Search_button;
+        private NumericUpDown RegisterNo_numericUpDown;
     }
 }

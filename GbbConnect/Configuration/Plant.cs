@@ -14,10 +14,10 @@ namespace GbbConnect.Configuration
         private string m_AddressIP = "";
 
         [ObservableProperty]
-        private int m_PortNo = 502;
+        private int m_PortNo = 8899;
 
         [ObservableProperty]
-        private long m_SerialNumber = 502;
+        private long m_SerialNumber = 0;
 
         [ObservableProperty]
         private string? m_Password;
