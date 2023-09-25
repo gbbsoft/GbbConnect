@@ -1,5 +1,3 @@
-using GbbConnect.Configuration;
-
 namespace GbbConnect
 {
     internal static class Program
@@ -12,7 +10,7 @@ namespace GbbConnect
 
         public static Exception? ExDuringLoading { get; set; }
 
-        internal static Configuration.Parameters Parameters { get; set; } = new();
+        internal static GbbEngine.Configuration.Parameters Parameters { get; set; } = new();
 
         internal static void Parameters_Save()
         {
@@ -26,7 +24,7 @@ namespace GbbConnect
             var FileName = Parameters_GetFileName();
             try
             {
-                Parameters = Configuration.Parameters.Load(Parameters_GetFileName());
+                Parameters = GbbEngine.Configuration.Parameters.Load(Parameters_GetFileName());
             }
             catch (ApplicationException)
             {

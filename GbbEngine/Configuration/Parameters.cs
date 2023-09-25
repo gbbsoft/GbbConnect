@@ -7,14 +7,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace GbbConnect.Configuration
+namespace GbbEngine.Configuration
 {
     public partial class Parameters : ObservableObject
     {
         public PlantList Plants { get; set; } = new();
 
+        //[ObservableProperty]
+        //private Plant? m_CurrPlant;
+
         [ObservableProperty]
-        private Plant? m_CurrPlant;
+        private string? m_GbbVictronWeb_Mqtt_Address;
+
+        [ObservableProperty]
+        private int? m_GbbVictronWeb_Mqtt_Port;
+
+
 
 
         // ======================================
@@ -23,8 +31,15 @@ namespace GbbConnect.Configuration
         {
             xml.WriteStartElement("Parameters");
             xml.WriteAttributeString("Version", VERSION.ToString());
-            if (CurrPlant!= null)
-                xml.WriteAttributeString("CurrPlant", XmlConvert.ToString(Plants.IndexOf(CurrPlant)));
+
+            if (GbbVictronWeb_Mqtt_Address!=null)
+                xml.WriteAttributeString("GbbVictronWeb_Mqtt_Address", GbbVictronWeb_Mqtt_Address);
+            if (GbbVictronWeb_Mqtt_Port!=null)
+                xml.WriteAttributeString("GbbVictronWeb_Mqtt_Port", GbbVictronWeb_Mqtt_Port.ToString());
+
+
+            //if (CurrPlant!= null)
+            //    xml.WriteAttributeString("CurrPlant", XmlConvert.ToString(Plants.IndexOf(CurrPlant)));
 
             foreach (var itm in Plants)
                 itm.WriteToXML(xml);
@@ -43,12 +58,21 @@ namespace GbbConnect.Configuration
                     throw new ApplicationException("Can't read Parameters from newer program version!");
 
                 string? s;
-                //int i;
+                int i;
 
-                //string? sCurrentGame = xml.GetAttribute("CurrentGame");
+                ret.GbbVictronWeb_Mqtt_Address = xml.GetAttribute("GbbVictronWeb_Mqtt_Address");
+                if (ret.GbbVictronWeb_Mqtt_Address == null)
+                    ret.GbbVictronWeb_Mqtt_Address = "gbbconnect-mqtt.gbbsoft.pl";
 
-                // for later
-                s = xml.GetAttribute("CurrLoadProfile");
+                s = xml.GetAttribute("GbbVictronWeb_Mqtt_Port");
+                if (s != null && int.TryParse(s, out i))
+                    ret.GbbVictronWeb_Mqtt_Port = i;
+                else
+                    ret.GbbVictronWeb_Mqtt_Port = 8899;
+
+
+                //// for later
+                //s = xml.GetAttribute("CurrLoadProfile");
 
 
                 if (!xml.IsEmptyElement)
@@ -68,13 +92,13 @@ namespace GbbConnect.Configuration
                 else
                     xml.Skip();
 
-                // curr plant
-                if (s != null)
-                {
-                    int index = XmlConvert.ToInt32(s);
-                    if (index >= 0 && index < ret.Plants.Count)
-                        ret.CurrPlant = ret.Plants[index];
-                }
+                //// curr plant
+                //if (s != null)
+                //{
+                //    int index = XmlConvert.ToInt32(s);
+                //    if (index >= 0 && index < ret.Plants.Count)
+                //        ret.CurrPlant = ret.Plants[index];
+                //}
 
 
             }
@@ -133,9 +157,9 @@ namespace GbbConnect.Configuration
                 ret.Plants.Add(p);
             }
 
-            // curr plant
-            if (ret.CurrPlant == null && ret.Plants.Count > 0)
-                ret.CurrPlant = ret.Plants[0];
+            //// curr plant
+            //if (ret.CurrPlant == null && ret.Plants.Count > 0)
+            //    ret.CurrPlant = ret.Plants[0];
 
             //// create forecasts
             //foreach (var itm in ret.Plants)

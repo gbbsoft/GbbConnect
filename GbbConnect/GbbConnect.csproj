@@ -13,12 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\GbbLibWin\GbbLibWin.csproj" />
     <ProjectReference Include="..\..\GbbLib\GbbLib.csproj" />
+    <ProjectReference Include="..\GbbEngine\GbbEngine.csproj" />
     <ProjectReference Include="..\modbusTCP-DotNET\ModbusTCP\ModbusTCP\ModbusTCP.csproj" />
   </ItemGroup>
 

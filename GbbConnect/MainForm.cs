@@ -15,7 +15,13 @@ namespace GbbConnect
 
                 DateTime td = DateTime.Today;
 
+                // dictionaries
+                this.inverterInfoBindingSource.DataSource = GbbEngine.Inverters.InverterInfo.OurGetInverterInfos();
+
+
+                // parameters
                 this.ParametersBindingSource.DataSource = Program.Parameters;
+
 
                 //this.ImportVRM_FromDate_dateTimePicker.Value = DateTime.Today.AddDays(-28);
                 //this.ImportVRM_ToDate_dateTimePicker.Value = DateTime.Today.AddDays(-1);
@@ -23,11 +29,11 @@ namespace GbbConnect
                 //GbbLib.Application.StatusBar.OnStatusBarMessage += (arg) => { this.toolStripStatusLabel1.Text = arg.sInfo; };
 
 
-                //// About
-                //if (td.Year == 2023)
-                //    this.About_label2.Text = $"2023";
-                //else
-                //    this.About_label2.Text = $"2023 - {DateTime.Today.Year}";
+                // About
+                if (td.Year == 2023)
+                    this.About_label2.Text = this.About_label2.Text + " 2023";
+                else
+                    this.About_label2.Text = this.About_label2.Text + " 2023 - {DateTime.Today.Year}";
             }
             catch (Exception ex)
             {
@@ -91,30 +97,32 @@ namespace GbbConnect
                     foreach (var itm in Program.Parameters.Plants)
                     {
 
-                        try
+                        if (itm.IsDisabled == 0 && itm.AddressIP != null && itm.PortNo != null)
                         {
-
-                            Log($"Plant: {itm.Name}");
-                            var driver = new ModbusTCP.Master(itm.AddressIP, (ushort)itm.PortNo);
-                            driver.OnException += Driver_OnException;
                             try
                             {
 
-                                byte[] answer = { 0, 66 };
-                                //driver.WriteMultipleRegister(0, 1, 184, answer);
+                                Log($"Plant: {itm.Name}");
+                                var driver = new ModbusTCP.Master(itm.AddressIP, (ushort)itm.PortNo);
+                                driver.OnException += Driver_OnException;
+                                try
+                                {
 
-                                driver.ReadHoldingRegister(1, 1, 184, 1, ref answer);
+                                    byte[] answer = { 0, 66 };
 
-                                Log($"Value (first 2 bytes): {answer[0] * 256 + answer[1]}");
+                                    driver.ReadHoldingRegister(1, 1, (ushort)RegisterNo_numericUpDown.Value, 1, ref answer);
+
+                                    Log($"Value (first 2 bytes): {answer[0] * 256 + answer[1]}");
+                                }
+                                finally
+                                {
+                                    driver.disconnect();
+                                }
                             }
-                            finally
+                            catch (Exception ex)
                             {
-                                driver.disconnect();
+                                Log(ex.Message);
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log(ex.Message);
                         }
 
                     }
@@ -133,11 +141,6 @@ namespace GbbConnect
             throw new ApplicationException($"Exceeption from driver: function: {function}, exception: {exception}");
         }
 
-        private void Log(string message)
-        {
-            this.TestLog_textBox.AppendText($"{DateTime.Now}: {message}\r\n");
-        }
-
         private void TestSolarmanV5_button_Click(object sender, EventArgs e)
         {
             try
@@ -148,30 +151,33 @@ namespace GbbConnect
                     foreach (var itm in Program.Parameters.Plants)
                     {
 
-                        try
+                        if (itm.IsDisabled == 0 && itm.AddressIP != null && itm.PortNo != null)
                         {
-
-                            Log($"Plant: {itm.Name}");
-                            var driver = new Drivers.SolarmanV5.SolarmanV5Driver(itm.AddressIP, itm.PortNo, itm.SerialNumber);
                             try
                             {
 
+                                Log($"Plant: {itm.Name}");
+                                var driver = new GbbEngine.Drivers.SolarmanV5.SolarmanV5Driver(itm.AddressIP, itm.PortNo.Value, itm.SerialNumber ?? 0);
+                                try
+                                {
 
-                                byte[] answer = { 0, 66 };
-                                //driver.WriteMultipleRegister(0, 1, 184, answer);
 
-                                answer = driver.ReadHoldingRegister(1, (ushort)RegisterNo_numericUpDown.Value, 1, this.TestLog_textBox);
+                                    byte[] answer = { 0, 66 };
+                                    //driver.WriteMultipleRegister(0, 1, 184, answer);
 
-                                Log($"SOC: {answer[0] * 256 + answer[1]}");
+                                    answer = driver.ReadHoldingRegister(1, (ushort)RegisterNo_numericUpDown.Value, 1);
+
+                                    Log($"SOC: {answer[0] * 256 + answer[1]}");
+                                }
+                                finally
+                                {
+                                    driver.Dispose();
+                                }
                             }
-                            finally
+                            catch (Exception ex)
                             {
-                                driver.Dispose();
+                                Log(ex.Message);
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log(ex.Message);
                         }
 
                     }
@@ -194,7 +200,7 @@ namespace GbbConnect
                 {
 
                     Log($"{DateTime.Now}: Start search (5 sec)");
-                    var ll = Drivers.SolarmanV5.SolarmanV5Driver.OurSearchSolarman();
+                    var ll = GbbEngine.Drivers.SolarmanV5.SolarmanV5Driver.OurSearchSolarman();
 
                     Log($"{DateTime.Now}: Result: (IpAddress, MAC address, SerialNo)");
                     if (ll.Count == 0)
@@ -217,5 +223,11 @@ namespace GbbConnect
                 GbbLibWin.Log.ErrMsgBox(this, ex);
             }
         }
+
+        private void Log(string message)
+        {
+            this.TestLog_textBox.AppendText($"{DateTime.Now}: {message}\r\n");
+        }
+
     }
 }

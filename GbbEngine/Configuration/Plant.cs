@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Xml;
 
-namespace GbbConnect.Configuration
+namespace GbbEngine.Configuration
 {
     public partial class Plant : ObservableObject
     {
@@ -10,21 +10,45 @@ namespace GbbConnect.Configuration
         [ObservableProperty]
         private string m_Name = "";
 
-        [ObservableProperty]
-        private string m_AddressIP = "";
+        // ======================================
+        // Inverter
+        // ======================================
 
         [ObservableProperty]
-        private int m_PortNo = 8899;
+        private int m_InverterNumber = 0;
 
         [ObservableProperty]
-        private long m_SerialNumber = 0;
+        private int m_IsDisabled = 0;
 
         [ObservableProperty]
-        private string? m_Password;
+        private string? m_AddressIP;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(Cerbo_UseDirectConn))]
-        private bool m_Cerbo_UseVRMConn;
+        private int? m_PortNo = 8899;
+
+        [ObservableProperty]
+        private long? m_SerialNumber;
+
+
+        //[ObservableProperty]
+        //private string? m_Password;
+
+        //[ObservableProperty]
+        //[NotifyPropertyChangedFor(nameof(Cerbo_UseDirectConn))]
+        //private bool m_Cerbo_UseVRMConn;
+
+
+        // ======================================
+        // GbbVictronWeb
+        // ======================================
+        [ObservableProperty]
+        private string? m_GbbVictronWeb_UserEmail;
+
+        [ObservableProperty]
+        private int? m_GbbVictronWeb_PlantId;
+
+        [ObservableProperty]
+        private string? m_GbbVictronWeb_PlantToken;
 
 
 
@@ -36,17 +60,17 @@ namespace GbbConnect.Configuration
         }
 
 
-        public bool Cerbo_UseDirectConn
-        {
-            get
-            {
-                return !Cerbo_UseVRMConn;
-            }
-            set
-            {
-                Cerbo_UseVRMConn = !value;
-            }
-        }
+        //public bool Cerbo_UseDirectConn
+        //{
+        //    get
+        //    {
+        //        return !Cerbo_UseVRMConn;
+        //    }
+        //    set
+        //    {
+        //        Cerbo_UseVRMConn = !value;
+        //    }
+        //}
 
         // ======================================
         const int VERSION = 1;
@@ -60,14 +84,29 @@ namespace GbbConnect.Configuration
             xml.WriteStartElement("Plant");
             xml.WriteAttributeString("Version", VERSION.ToString());
 
+
             xml.WriteAttributeString("Name", Name);
-            xml.WriteAttributeString("AddressIP", AddressIP);
-            xml.WriteAttributeString("PortNo", PortNo.ToString());
-            xml.WriteAttributeString("SerialNumber", SerialNumber.ToString());
-            if (Password != null)
-                xml.WriteAttributeString("Password", GbbLib.Encryption.AES_Encrypt(cipher, IV, Password));
-            xml.WriteAttributeString("Cerbo_UseVRMConn", XmlConvert.ToString(Cerbo_UseVRMConn));
-            
+            xml.WriteAttributeString("InverterNumber", InverterNumber.ToString());
+            xml.WriteAttributeString("IsDisabled", IsDisabled.ToString());
+
+            if (AddressIP!=null)
+                xml.WriteAttributeString("AddressIP", AddressIP);
+            if (PortNo!=null)
+                xml.WriteAttributeString("PortNo", PortNo.ToString());
+            if (SerialNumber!=null)
+                xml.WriteAttributeString("SerialNumber", SerialNumber.ToString());
+
+            if (GbbVictronWeb_UserEmail!=null)
+                xml.WriteAttributeString("GbbVictronWeb_UserEmail", GbbVictronWeb_UserEmail);
+            if (GbbVictronWeb_PlantId!=null)
+                xml.WriteAttributeString("GbbVictronWeb_PlantId", GbbVictronWeb_PlantId.ToString());
+            if (GbbVictronWeb_PlantToken!=null)
+                xml.WriteAttributeString("GbbVictronWeb_PlantToken", GbbVictronWeb_PlantToken);
+
+            //if (Password != null)
+            //    xml.WriteAttributeString("Password", GbbLib.Encryption.AES_Encrypt(cipher, IV, Password));
+            //xml.WriteAttributeString("Cerbo_UseVRMConn", XmlConvert.ToString(Cerbo_UseVRMConn));
+
             //foreach (var itm in Forecasts)
             //    itm.WriteToXML(xml);
 
@@ -92,20 +131,33 @@ namespace GbbConnect.Configuration
                 long l;
 
                 ret.Name = xml.GetAttribute("Name") ?? "";
-                ret.AddressIP= xml.GetAttribute("AddressIP") ?? "";
+                s = xml.GetAttribute("InverterNumber");
+                if (s != null && int.TryParse(s, out i))
+                    ret.InverterNumber = i;
+                s = xml.GetAttribute("IsDisabled");
+                if (s != null && int.TryParse(s, out i))
+                    ret.IsDisabled = i;
 
-                s = xml.GetAttribute("Password");
-                if (s != null)
-                    ret.Password = GbbLib.Encryption.AES_Decrypt(cipher, IV, s);
+                ret.AddressIP = xml.GetAttribute("AddressIP");
                 s = xml.GetAttribute("PortNo");
                 if (s != null && int.TryParse(s, out i))
                     ret.PortNo = i;
                 s = xml.GetAttribute("SerialNumber");
                 if (s != null && long.TryParse(s, out l))
                     ret.SerialNumber = l;
-                s = xml.GetAttribute("Cerbo_UseVRMConn");
-                if (s != null)
-                    ret.Cerbo_UseVRMConn = XmlConvert.ToBoolean(s);
+
+                ret.GbbVictronWeb_UserEmail = xml.GetAttribute("GbbVictronWeb_UserEmail");
+                s = xml.GetAttribute("m_GbbVictronWeb_PlantId");
+                if (s != null && int.TryParse(s, out i))
+                    ret.GbbVictronWeb_PlantId = i;
+                ret.GbbVictronWeb_PlantToken = xml.GetAttribute("GbbVictronWeb_PlantToken");
+
+                //s = xml.GetAttribute("Password");
+                //if (s != null)
+                //    ret.Password = GbbLib.Encryption.AES_Decrypt(cipher, IV, s);
+                //s = xml.GetAttribute("Cerbo_UseVRMConn");
+                //if (s != null)
+                //    ret.Cerbo_UseVRMConn = XmlConvert.ToBoolean(s);
 
                 // for later
                 //var sCurrLoadProfile = xml.GetAttribute("CurrLoadProfile");

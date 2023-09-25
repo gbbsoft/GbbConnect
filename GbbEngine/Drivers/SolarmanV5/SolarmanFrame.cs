@@ -4,9 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GbbLib.Application.StatusBar;
 
-namespace GbbConnect.Drivers.SolarmanV5
+namespace GbbEngine.Drivers.SolarmanV5
 {
 
     internal class SolarmanFrame

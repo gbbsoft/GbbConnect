@@ -3,11 +3,8 @@ using System.Net.Sockets;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
-using Azure.Core;
-using Azure.Identity;
 
-namespace GbbConnect.Drivers.SolarmanV5
+namespace GbbEngine.Drivers.SolarmanV5
 {
     public class SolarmanV5Driver : IDisposable 
     {
@@ -86,14 +83,14 @@ namespace GbbConnect.Drivers.SolarmanV5
         //
         //
 
-        public byte[] ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs, TextBox tb)
+        public byte[] ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs)
         {
             if (numInputs > 125)
                 throw new ApplicationException("Too much registers to read!");
-            return WriteSyncData(CreateReadHeader(unit, startAddress, numInputs, 3), tb);
+            return WriteSyncData(CreateReadHeader(unit, startAddress, numInputs, 3));
         }
 
-        public byte[] WriteMultipleRegister(byte unit, ushort startAddress, byte[] values, TextBox tb)
+        public byte[] WriteMultipleRegister(byte unit, ushort startAddress, byte[] values)
         {
             if (values.Length > 250)
                 throw new ApplicationException("Too much registers to write!");
@@ -106,7 +103,7 @@ namespace GbbConnect.Drivers.SolarmanV5
             var crc = GetCRC(data);
             data[data.Length - 2] = crc[0];
             data[data.Length - 1] = crc[1];
-            return WriteSyncData(data, tb);
+            return WriteSyncData(data);
 
         }
 
@@ -180,7 +177,7 @@ namespace GbbConnect.Drivers.SolarmanV5
 
         // ------------------------------------------------------------------------
         // Write data and and wait for response
-        private byte[] WriteSyncData(byte[] write_data, TextBox tb)
+        private byte[] WriteSyncData(byte[] write_data)
         {
             ArgumentNullException.ThrowIfNull(Socket);
 
@@ -188,11 +185,11 @@ namespace GbbConnect.Drivers.SolarmanV5
 
             if (Socket.Connected)
             {
-                tb.AppendText($"{DateTime.Now}: Send ModBus: {BitConverter.ToString(write_data)}\r\n");
+                //tb.AppendText($"{DateTime.Now}: Send ModBus: {BitConverter.ToString(write_data)}\r\n");
 
                 var Frame = new SolarmanFrame(GetNextSequenceNumber(), SerialNumber);
                 var OutBuf = Frame.CreateFrame(write_data);
-                tb.AppendText($"{DateTime.Now}: Send: {BitConverter.ToString(OutBuf)}\r\n");
+                //tb.AppendText($"{DateTime.Now}: Send: {BitConverter.ToString(OutBuf)}\r\n");
                 int bytesSent = Socket.Send(OutBuf);
 
                 byte[] buffer = new byte[1024];
@@ -201,10 +198,10 @@ namespace GbbConnect.Drivers.SolarmanV5
                     throw new ApplicationException("Connection Lost");
                 byte[] InBuf = new byte[bytesReceived];
                 Buffer.BlockCopy(buffer, 0, InBuf, 0, bytesReceived);
-                tb.AppendText($"{DateTime.Now}: Received: {BitConverter.ToString(InBuf)}\r\n");
+                //tb.AppendText($"{DateTime.Now}: Received: {BitConverter.ToString(InBuf)}\r\n");
 
                 Buf = Frame.GetModBusFrame(InBuf);
-                tb.AppendText($"{DateTime.Now}: Received ModBus: {BitConverter.ToString(Buf)}\r\n");
+                //tb.AppendText($"{DateTime.Now}: Received ModBus: {BitConverter.ToString(Buf)}\r\n");
 
                 var crc = GetCRC(Buf);
                 if (crc[0] != Buf[Buf.Length-2]
@@ -275,7 +272,7 @@ namespace GbbConnect.Drivers.SolarmanV5
             udpClient.EnableBroadcast = true;
             udpClient.Client.SendTimeout = 5000;
             udpClient.Client.ReceiveTimeout = 5000;
-            udpClient.AllowNatTraversal(true);
+            //udpClient.AllowNatTraversal(true);
 
             var request = "WIFIKIT-214028-READ";
 
