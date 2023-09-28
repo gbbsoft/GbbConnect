@@ -1,6 +1,9 @@
+using GbbEngine.Configuration;
+using Microsoft.Extensions.Logging;
+
 namespace GbbConnect
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, GbbLib.IOurLog
     {
         public MainForm()
         {
@@ -42,6 +45,22 @@ namespace GbbConnect
 
         }
 
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            try
+            {
+                // Autostart Server
+                if (Program.Parameters.Server_AutoStart)
+                    StartServer_button_Click(sender, e);
+
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
+        }
+
+
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
@@ -73,9 +92,35 @@ namespace GbbConnect
 
         }
 
+        private void VerboseLog_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                GbbEngine.Configuration.Parameters.IsVerboseLog = this.VerboseLog_checkBox.Checked;
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
+        }
+
+
         // ======================================
         // Plants
         // ======================================
+
+        private void plantsBindingSource_AddingNew(object sender, System.ComponentModel.AddingNewEventArgs e)
+        {
+            Plant ret = new();
+
+            // calculate next InverterNumber
+            ret.Number = 1;
+            foreach (var itm in Program.Parameters.Plants)
+                if (itm.Number >= ret.Number)
+                    ret.Number = itm.Number + 1;
+
+            e.NewObject = ret;
+        }
 
         private void Plants_DataGridView_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
         {
@@ -224,9 +269,106 @@ namespace GbbConnect
             }
         }
 
+        // ======================================
+        // Log
+        // ======================================
+
+        private object LogSync = new();
+
         private void Log(string message)
         {
-            this.TestLog_textBox.AppendText($"{DateTime.Now}: {message}\r\n");
+            this.Log_textBox.AppendText($"{DateTime.Now}: {message}\r\n");
+        }
+
+        // log from engine
+        public void OurLog(LogLevel LogLevel, string message, params object?[] args)
+        {
+            var nw = DateTime.Now;
+
+            if (args.Length > 0)
+                message = string.Format(message, args);
+
+            // add time
+            string msg;
+            if (LogLevel == LogLevel.Error)
+                msg = $"{nw}: ERROR: {message}\r\n";
+            else
+                msg = $"{nw}: {message}\r\n";
+
+            lock (LogSync)
+            {
+
+                // directory for log
+                string FileName = Path.Combine(GbbEngine.Configuration.Parameters.OurGetUserBaseDirectory(), "Log");
+                Directory.CreateDirectory(FileName);
+
+                // filename of log
+                FileName = Path.Combine(FileName, $"{nw:yyyy-MM-dd}.txt");
+                File.AppendAllText(FileName, msg);
+            }
+
+
+
+            // log also to Log_textbox
+            if (this.InvokeRequired)
+                this.Invoke(new Action(() =>
+                {
+                    if (Log_textBox.Text.Length > 10000)
+                        Log_textBox.Text = Log_textBox.Text.Substring(5000) + msg;
+                    else
+                        Log_textBox.AppendText(msg);
+                }));
+            else
+                Log_textBox.AppendText(msg);
+
+
+        }
+
+        // ======================================
+        // Server
+        // ======================================
+        private GbbEngine.Server.JobManager? JobManeger;
+
+        private void StartServer_button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.ValidateChildren();
+                this.tabControl1.SelectedTab = this.Log_tabPage2;
+
+                if (JobManeger == null)
+                {
+                    JobManeger = new();
+                    JobManeger.OurStartJobs(Program.Parameters, this);
+                }
+                this.StartServer_button.Enabled = false;
+                this.StopServer_button.Enabled = true;
+
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
+
+        }
+
+        private void StopServer_button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (JobManeger != null)
+                {
+                    JobManeger.OurStopJobs(Program.Parameters);
+                    JobManeger = null;
+                }
+                this.StartServer_button.Enabled = true;
+                this.StopServer_button.Enabled = false;
+
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GbbEngine.Server;
 using System.Runtime.CompilerServices;
 using System.Xml;
 
@@ -15,7 +16,11 @@ namespace GbbEngine.Configuration
         // ======================================
 
         [ObservableProperty]
-        private int m_InverterNumber = 0;
+        private int m_Number = 1;
+
+
+        [ObservableProperty]
+        private int m_InverterNumber;
 
         [ObservableProperty]
         private int m_IsDisabled = 0;
@@ -51,7 +56,17 @@ namespace GbbEngine.Configuration
         private string? m_GbbVictronWeb_PlantToken;
 
 
+        // ======================================
+        // Services state
+        // ======================================
 
+        internal PlantState? PlantState;
+
+
+
+        // ======================================
+        // Constructor
+        // ======================================
         //public ForecastList Forecasts { get; init; }
 
         public Plant()
@@ -85,6 +100,7 @@ namespace GbbEngine.Configuration
             xml.WriteAttributeString("Version", VERSION.ToString());
 
 
+            xml.WriteAttributeString("Number", Number.ToString());
             xml.WriteAttributeString("Name", Name);
             xml.WriteAttributeString("InverterNumber", InverterNumber.ToString());
             xml.WriteAttributeString("IsDisabled", IsDisabled.ToString());
@@ -130,24 +146,33 @@ namespace GbbEngine.Configuration
                 int i;
                 long l;
 
+                s = xml.GetAttribute("Number");
+                if (s != null && int.TryParse(s, out i))
+                    ret.Number = i;
+
                 ret.Name = xml.GetAttribute("Name") ?? "";
+
                 s = xml.GetAttribute("InverterNumber");
                 if (s != null && int.TryParse(s, out i))
                     ret.InverterNumber = i;
+
                 s = xml.GetAttribute("IsDisabled");
                 if (s != null && int.TryParse(s, out i))
                     ret.IsDisabled = i;
 
                 ret.AddressIP = xml.GetAttribute("AddressIP");
+
                 s = xml.GetAttribute("PortNo");
+
                 if (s != null && int.TryParse(s, out i))
                     ret.PortNo = i;
                 s = xml.GetAttribute("SerialNumber");
+
                 if (s != null && long.TryParse(s, out l))
                     ret.SerialNumber = l;
 
                 ret.GbbVictronWeb_UserEmail = xml.GetAttribute("GbbVictronWeb_UserEmail");
-                s = xml.GetAttribute("m_GbbVictronWeb_PlantId");
+                s = xml.GetAttribute("GbbVictronWeb_PlantId");
                 if (s != null && int.TryParse(s, out i))
                     ret.GbbVictronWeb_PlantId = i;
                 ret.GbbVictronWeb_PlantToken = xml.GetAttribute("GbbVictronWeb_PlantToken");

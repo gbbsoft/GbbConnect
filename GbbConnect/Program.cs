@@ -8,26 +8,25 @@ namespace GbbConnect
         // =========================================
 
 
-        public static Exception? ExDuringLoading { get; set; }
-
         internal static GbbEngine.Configuration.Parameters Parameters { get; set; } = new();
 
         internal static void Parameters_Save()
         {
             if (Parameters != null)
-                Parameters.Save(Parameters_GetFileName());
+                Parameters.Save(GbbEngine.Configuration.Parameters.Parameters_GetFileName());
         }
 
 
         internal static void Parameters_Load()
         {
-            var FileName = Parameters_GetFileName();
+            var FileName = GbbEngine.Configuration.Parameters.Parameters_GetFileName();
             try
             {
-                Parameters = GbbEngine.Configuration.Parameters.Load(Parameters_GetFileName());
+                Parameters = GbbEngine.Configuration.Parameters.Load(FileName);
             }
             catch (ApplicationException)
             {
+                // move bad configuration file as "archive" file.
                 System.IO.File.Move(FileName, $"{FileName}_Bad_{DateTime.Now.ToString("yyMMdd_HHmmss")}.xml");
 
                 throw;
@@ -36,18 +35,6 @@ namespace GbbConnect
 
         }
 
-        public static string OurGetMainDataDir()
-        {
-            string mainDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gbb Software", "GbbConnect");
-            Directory.CreateDirectory(mainDir);
-            return mainDir;
-
-        }
-
-        public static string Parameters_GetFileName()
-        {
-            return System.IO.Path.Combine(OurGetMainDataDir(), "Parameters.xml");
-        }
 
         // =========================================
 

@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageReference Include="MQTTnet" Version="4.3.1.873" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\GbbLib\GbbLib.csproj" />
+    <ProjectReference Include="..\GbbConnectProtocol\GbbConnectProtocol.csproj" />
   </ItemGroup>
 
 </Project>

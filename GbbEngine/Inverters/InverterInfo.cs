@@ -11,60 +11,116 @@ namespace GbbEngine.Inverters
         public int Number {  get; set; }
         public string Name { get; set; }
 
-        public InverterInfo(int Number, string name)
+        public enum Drivers
+        {
+            i000_SolarmanV5 = 0,
+            i999_Random = 999,
+        }
+        public Drivers Driver {  get; set; }
+
+
+        public InverterInfo(int Number, string name, Drivers _driver)
         { 
             this.Number = Number;   
             this.Name = name; 
+            this.Driver = _driver;
         }
+
+
+        
 
 
         public int? RegisterNo_SOC;
 
-        public int? RegisterNo_PVProdLo; // kWh
-        public int? RegisterNo_PVProdHi;
+        public int? PVProd_RegNo_Lo; // kWh
+        public int? PVProd_RegNo_Hi;
+        public decimal? PVProd_Multipler;
 
-        public int? RegisterNo_TotalFromGridLo; // kWh
-        public int? RegisterNo_TotalFromGridHi; 
+        public int? FromGrid_RegNo_TotalLo; // kWh
+        public int? FromGrid_RegNo_TotalHi;
+        public decimal? FromGrid_Multipler;
 
-        public int? RegisterNo_TotalToGridLo; // kWh
-        public int? RegisterNo_TotalToGridHi;
+        public int? ToGrid_RegNo_TotalLo; // kWh
+        public int? ToGrid_RegNo_TotalHi;
+        public decimal? ToGrid_Multipler;
 
-        public int? RegisterNo_TotalLoadLo; // kWh
-        public int? RegisterNo_TotalLoadHi;
+        public int? Load_RegNo_TotalLo; // kWh
+        public int? Load_RegNo_TotalHi;
+        public decimal? Load_Multipler;
 
-        
+
         /// <summary>
-        /// to load one set of registers during getting of statistic. Null - read one by one
+        /// to load whole set of registers during getting of statistic. Null - read one by one. 
+        /// Registers out of this set will be read one-by-one
         /// </summary>
-        public int? StatisticCache_RegStart;
-        public int? StatisticCache_RefCount;
+        public int? FastRead1_RegStart;
+        public int? FastRead1_RegCount;
 
 
+        static List<InverterInfo>? Cache;
         public static List<InverterInfo> OurGetInverterInfos()
         {
-            return new List<InverterInfo>()
+            if (Cache==null)
             {
-                new InverterInfo(0, "Deya SUN-5/6/8/10/12K-SG04LP3")
+                Cache = new List<InverterInfo>()
                 {
-                    RegisterNo_SOC = 588,
+                    new InverterInfo(0, "Deya SUN-5/6/8/10/12K-SG04LP3", Drivers.i000_SolarmanV5)
+                    {
+                        RegisterNo_SOC = 588,
 
-                    RegisterNo_PVProdLo = 534,
-                    RegisterNo_PVProdHi = 535,
+                        PVProd_RegNo_Lo = 534,
+                        PVProd_RegNo_Hi = 535,
+                        PVProd_Multipler = 0.1m,
 
-                    RegisterNo_TotalFromGridLo = 522,
-                    RegisterNo_TotalFromGridHi = 523,
+                        FromGrid_RegNo_TotalLo = 522,
+                        FromGrid_RegNo_TotalHi = 523,
+                        FromGrid_Multipler = 0.1m,
 
-                    RegisterNo_TotalToGridLo = 524,
-                    RegisterNo_TotalToGridHi = 525,
+                        ToGrid_RegNo_TotalLo = 524,
+                        ToGrid_RegNo_TotalHi = 525,
+                        ToGrid_Multipler = 0.1m,
 
-                    RegisterNo_TotalLoadLo = 527,
-                    RegisterNo_TotalLoadHi = 528,
+                        Load_RegNo_TotalLo = 527,
+                        Load_RegNo_TotalHi = 528,
+                        Load_Multipler = 0.1m,
 
-                    StatisticCache_RegStart = 522,
-                    StatisticCache_RefCount = 528-535+1,
+                        FastRead1_RegStart = 522,
+                        FastRead1_RegCount = 528-535+1,
+                    },
+#if DEBUG
+                    new InverterInfo(999, "Random", Drivers.i999_Random)
+                    {
+                        RegisterNo_SOC = 0,
 
-                }
-            };
+                        PVProd_RegNo_Lo = 1,
+                        PVProd_RegNo_Hi = null,
+
+                        FromGrid_RegNo_TotalLo = 2,
+                        FromGrid_RegNo_TotalHi = null,
+
+                        ToGrid_RegNo_TotalLo = 3,
+                        ToGrid_RegNo_TotalHi = null,
+
+                        Load_RegNo_TotalLo = 4,
+                        Load_RegNo_TotalHi = null,
+
+                        FastRead1_RegStart = 0,
+                        FastRead1_RegCount = 5,
+                    },
+
+#endif
+                };
+            }
+            return Cache;
+        }
+
+        public static InverterInfo OurGetInverterInfoByNumber(int Number)
+        {
+            foreach (var itm in OurGetInverterInfos())
+                if (itm.Number == Number)
+                    return itm;
+
+            throw new ApplicationException("Unknown InverterInfoId=" + Number);
         }
 
     }

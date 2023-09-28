@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace GbbEngine.Drivers.SolarmanV5
 {
-    public class SolarmanV5Driver : IDisposable 
+    public class SolarmanV5Driver : IDisposable , IDriver
     {
 
         public int Timeout { get; set; } = 500;
@@ -37,11 +37,11 @@ namespace GbbEngine.Drivers.SolarmanV5
                 _ip= hst.AddressList[0];
             }
             Socket = new Socket(_ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            Socket.Connect(new IPEndPoint(_ip, PortNumber));
             Socket.SendTimeout = Timeout;
             Socket.ReceiveTimeout = Timeout;
             Socket.NoDelay = true;
-            
+            Socket.Connect(new IPEndPoint(_ip, PortNumber));
+
 
         }
 
@@ -250,7 +250,7 @@ namespace GbbEngine.Drivers.SolarmanV5
         private UInt16 GetNextSequenceNumber()
         {
             if (SequenceNumber == null)
-                SequenceNumber = (UInt16)new Random().Next(1, 255);
+                SequenceNumber = (UInt16)new System.Random().Next(1, 255);
             else
                 SequenceNumber = (UInt16)((SequenceNumber +1 ) & 255);
 

@@ -11,6 +11,9 @@ namespace GbbEngine.Configuration
 {
     public partial class Parameters : ObservableObject
     {
+        public static bool IsVerboseLog;
+
+        // ======================================
         public PlantList Plants { get; set; } = new();
 
         //[ObservableProperty]
@@ -22,10 +25,16 @@ namespace GbbEngine.Configuration
         [ObservableProperty]
         private int? m_GbbVictronWeb_Mqtt_Port;
 
+        [ObservableProperty]
+        private bool m_Server_AutoStart;
+
 
 
 
         // ======================================
+        // Save and Load
+        // ======================================
+
         const int VERSION = 1;
         public void WriteToXML(XmlWriter xml)
         {
@@ -36,6 +45,8 @@ namespace GbbEngine.Configuration
                 xml.WriteAttributeString("GbbVictronWeb_Mqtt_Address", GbbVictronWeb_Mqtt_Address);
             if (GbbVictronWeb_Mqtt_Port!=null)
                 xml.WriteAttributeString("GbbVictronWeb_Mqtt_Port", GbbVictronWeb_Mqtt_Port.ToString());
+
+            xml.WriteAttributeString("Server_AutoStart", Server_AutoStart ? "1" : "0");
 
 
             //if (CurrPlant!= null)
@@ -68,7 +79,11 @@ namespace GbbEngine.Configuration
                 if (s != null && int.TryParse(s, out i))
                     ret.GbbVictronWeb_Mqtt_Port = i;
                 else
-                    ret.GbbVictronWeb_Mqtt_Port = 8899;
+                    ret.GbbVictronWeb_Mqtt_Port = 8883;
+
+                s = xml.GetAttribute("Server_AutoStart");
+                if (s != null)
+                    ret.Server_AutoStart = s=="1";
 
 
                 //// for later
@@ -171,6 +186,38 @@ namespace GbbEngine.Configuration
         }
 
         // ======================================
+        // Base directory
+        // ======================================
+
+        /// <summary>
+        /// Base directory for program public data
+        /// </summary>
+        /// <returns></returns>
+        public static string OurGetUserBaseDirectory()
+        {
+            var Dir=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            Dir = Path.Combine(Dir, "GbbConnect");
+            Directory.CreateDirectory(Dir);
+            return Dir;
+        }
+
+
+        /// <summary>
+        /// Base directory for program internal data
+        /// </summary>
+        /// <returns></returns>
+        public static string OurGetMainDataDir()
+        {
+            string mainDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gbb Software", "GbbConnect");
+            Directory.CreateDirectory(mainDir);
+            return mainDir;
+
+        }
+
+        public static string Parameters_GetFileName()
+        {
+            return System.IO.Path.Combine(OurGetMainDataDir(), "Parameters.xml");
+        }
 
     }
 }
