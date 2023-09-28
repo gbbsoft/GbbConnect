@@ -78,7 +78,7 @@ namespace GbbEngine.Server
 
 
             // save
-            File.WriteAllText(OurGetFileName(Plant), JsonSerializer.Serialize(this, SerOpt));
+            File.WriteAllText(OurGetFileName(Plant!), JsonSerializer.Serialize(this, SerOpt));
         }
 
         public static PlantState OurLoadState(Plant plant)

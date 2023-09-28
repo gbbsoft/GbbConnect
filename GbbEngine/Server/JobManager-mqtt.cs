@@ -249,11 +249,17 @@ namespace GbbEngine.Server
                     log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Received request: {Encoding.UTF8.GetString(seg)}");
                 }
 
+
                 var ReqOpt = new JsonSerializerOptions();
                 var Request = JsonSerializer.Deserialize<Request>(seg, ReqOpt);
                 if (Request != null && Plant.PlantState!.MqttClient!=null)
                 {
                     Operation = Request.Operation;
+                    if (!Configuration.Parameters.IsVerboseLog)
+                    {
+                        log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Received request: {Operation} {Request.FromDate} {Request.ToDate}");
+                    }
+
 
 
                     var Response = new Response();
