@@ -21,8 +21,6 @@ public class Request_Scheduler
     public int ToMinute { get; set; } = 59;
     public long? ChargeLimitW { get; set; }
     public long? InputLimitW { get; set; }
-
-    public decimal? GridSetpointW { get; set; }
     public int PriceLessZero { get; set; }
 
     public string? Operation { get; set; }
