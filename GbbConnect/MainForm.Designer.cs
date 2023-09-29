@@ -80,6 +80,7 @@
             Save_button = new Button();
             StartServer_button = new Button();
             StopServer_button = new Button();
+            timer1 = new System.Windows.Forms.Timer(components);
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -581,6 +582,12 @@
             StopServer_button.UseVisualStyleBackColor = true;
             StopServer_button.Click += StopServer_button_Click;
             // 
+            // timer1
+            // 
+            timer1.Enabled = true;
+            timer1.Interval = 60000;
+            timer1.Tick += timer1_Tick;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -669,5 +676,6 @@
         private DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
         private GbbLibWin.OurDataGridViewComboBoxColumn2 Inverter;
         private DataGridViewCheckBoxColumn IsDisabled;
+        private System.Windows.Forms.Timer timer1;
     }
 }
