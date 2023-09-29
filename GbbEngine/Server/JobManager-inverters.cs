@@ -363,8 +363,11 @@ namespace GbbEngine.Server
 
                 Plant.PlantState.CurrentHourFileContent = CurrHour;
 
-                // save file
-                File.WriteAllText(FileName, Plant.PlantState.CurrentDayFileContent.ToString() + Plant.PlantState.CurrentHourFileContent.ToString());
+                lock (StatisticFileLock)
+                {
+                    // save file
+                    File.WriteAllText(FileName, Plant.PlantState.CurrentDayFileContent.ToString() + Plant.PlantState.CurrentHourFileContent.ToString());
+                }
 
                 // check end of hour/day
                 if (Plant.PlantState.TimeOfStart.Value.Date != nw.Date)

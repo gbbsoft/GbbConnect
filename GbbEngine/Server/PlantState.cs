@@ -37,6 +37,14 @@ namespace GbbEngine.Server
         public decimal? TotalLoadStart { get; set; } // kWh
         public decimal? TotalLoadCurr { get; set; }
 
+        // ======================================
+        // Plant State
+
+        //EventWaitHandle
+
+        public bool SchedulersReadyToProcess {  get; set; }
+        public List<GbbConnectProtocol.Request_Scheduler>? Schedulers { get; set; }
+
 
 
         // ======================================

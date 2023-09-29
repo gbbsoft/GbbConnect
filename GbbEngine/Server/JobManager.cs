@@ -9,6 +9,8 @@ namespace GbbEngine.Server
 
         private CancellationTokenSource cts = new();
 
+        private object StatisticFileLock = new object();
+
         public void OurStartJobs(Configuration.Parameters Parameters, GbbLib.IOurLog log)
         {
             // load plant state

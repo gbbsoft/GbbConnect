@@ -283,8 +283,9 @@ namespace GbbEngine.Server
 
                             break;
 
-                        //case "SetSchedulers":
-                        //    break;
+                        case "SetSchedulers":
+                            // TODO!
+                            break;
 
                         default:
                             Response.Status = "ERR";
@@ -361,81 +362,87 @@ namespace GbbEngine.Server
             CultureInfo ci = CultureInfo.InvariantCulture;
 
             Response.Statistics = new();
+            Response.FromDate = FromDate;
+            Response.ToDate = ToDate;
 
-            for(DateTime date = FromDate.Date; date <= ToDate; date = date.AddDays(1))
+            lock (StatisticFileLock)
             {
-                string FileName = OurGetStatFileName(Plant, date);
-                if (File.Exists(FileName))
+
+                for (DateTime date = FromDate.Date; date <= ToDate; date = date.AddDays(1))
                 {
-                    try
+                    string FileName = OurGetStatFileName(Plant, date);
+                    if (File.Exists(FileName))
                     {
-                        string s = File.ReadAllText(FileName);
-                        string[] lines = s.Split("\r\n");
-                        bool FirstLine = true;
-                        foreach (var line in lines)
+                        try
                         {
-                            if (FirstLine)
-                                // skip header
-                                FirstLine = false;
-                            else
+                            string s = File.ReadAllText(FileName);
+                            string[] lines = s.Split("\r\n");
+                            bool FirstLine = true;
+                            foreach (var line in lines)
                             {
-                                string[] col = line.Split('\t');
-                                if (col.Length > 1)
+                                if (FirstLine)
+                                    // skip header
+                                    FirstLine = false;
+                                else
                                 {
-                                    int Pos = 0;
-                                    var itm = new Response_Statistic();
-                                    itm.Day = DateTime.ParseExact(col[Pos++], "yyyy-MM-dd", ci);
-                                    itm.Hour = int.Parse(col[Pos++], ci);
-                                    
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.SOC = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                    string[] col = line.Split('\t');
+                                    if (col.Length > 1)
+                                    {
+                                        int Pos = 0;
+                                        var itm = new Response_Statistic();
+                                        itm.Day = DateTime.ParseExact(col[Pos++], "yyyy-MM-dd", ci);
+                                        itm.Hour = int.Parse(col[Pos++], ci);
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.MinSOC = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.SOC = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.MaxSOC = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.MinSOC = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.AvrSOC = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.MaxSOC = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.PVProdkWh = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.AvrSOC = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.FromGridkWh = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.PVProdkWh = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.ToGridkWh = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.FromGridkWh = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    if (col.Length>Pos && col[Pos]!=null)
-                                        itm.LoadskWh = decimal.Parse(col[Pos], ci);
-                                    Pos++;
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.ToGridkWh = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
-                                    Response.Statistics.Add(itm);
+                                        if (col.Length > Pos && col[Pos] != null)
+                                            itm.LoadskWh = decimal.Parse(col[Pos], ci);
+                                        Pos++;
 
+                                        Response.Statistics.Add(itm);
+
+                                    }
                                 }
                             }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            log.OurLog(LogLevel.Error, $"{Plant.Name}: GetStatistics: {date:d}: ERROR: {ex.Message}");
                         }
 
                     }
-                    catch (Exception ex)
-                    {
-                        log.OurLog(LogLevel.Error,$"{Plant.Name}: GetStatistics: {date:d}: ERROR: {ex.Message}");
-                    }
+
 
                 }
 
-
             }
-
         }
 
 
