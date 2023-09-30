@@ -99,7 +99,7 @@ namespace GbbEngine.Drivers.SolarmanV5
             if (numBytes % 2 > 0) numBytes++;
 
             byte[] data = CreateWriteHeader(unit, startAddress, Convert.ToUInt16(numBytes / 2), Convert.ToUInt16(numBytes), 16);
-            Array.Copy(values, 0, data, 6, values.Length);
+            Array.Copy(values, 0, data, 7, values.Length);
             var crc = GetCRC(data);
             data[data.Length - 2] = crc[0];
             data[data.Length - 1] = crc[1];
@@ -176,8 +176,8 @@ namespace GbbEngine.Drivers.SolarmanV5
 
         // ------------------------------------------------------------------------
         // Write data and and wait for response
-        private const int WAIT_READ_TIME_MS = 50;
-        private const int WAIT_WRITE_TIME_MS = 50;
+        private const int WAIT_READ_TIME_MS = 50; // 50ms
+        private const int WAIT_WRITE_TIME_MS = 3000; // 3s
         private DateTime? LastSend;
 
         private async Task<byte[]> WriteSyncData(byte[] write_data, bool iswrite)
@@ -195,7 +195,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                 {
                     int DelayMs;
                     if (iswrite)
-                        DelayMs = WAIT_READ_TIME_MS;
+                        DelayMs = WAIT_WRITE_TIME_MS;
                     else
                         DelayMs = WAIT_READ_TIME_MS;
 

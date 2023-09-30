@@ -247,12 +247,12 @@ namespace GbbEngine.Server
             
         }
 
-        private async Task<int> Get4Byte(int? RegNo1, int RegNo2, Dictionary<int, int> Values, IDriver Driver)
+        private async Task<int> Get4Byte(int? RegNoHi, int RegNoLo, Dictionary<int, int> Values, IDriver Driver)
         {
-            if (RegNo1 != null)
-                return await Get2Byte(RegNo1.Value, Values, Driver) << 16 + await Get2Byte(RegNo2, Values, Driver);
+            if (RegNoHi != null)
+                return await Get2Byte(RegNoLo, Values, Driver)+ await Get2Byte(RegNoHi.Value, Values, Driver) << 16 ; // first lo, so hi will be took together
             else
-                return await Get2Byte(RegNo2, Values, Driver);
+                return await Get2Byte(RegNoLo, Values, Driver);
         }
 
 
@@ -261,7 +261,7 @@ namespace GbbEngine.Server
             int ret;
             if (!Values.TryGetValue(RegNo, out ret))
             {
-                await GetRegisters(Driver, Values, RegNo, 1);
+                await GetRegisters(Driver, Values, RegNo, 2); // get also next register for Get4Bytes
             }
             return Values[RegNo];
         }
@@ -512,6 +512,8 @@ namespace GbbEngine.Server
                             Curr = itm;
 
 #if !DEBUG
+                        int Offset = 2 * 6; // bytes
+
                         // Time
                         await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos), Put2Byte(Tab, Pos, itm.FromTime));
 
