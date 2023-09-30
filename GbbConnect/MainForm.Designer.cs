@@ -66,6 +66,9 @@
             textBox9 = new TextBox();
             label10 = new Label();
             Log_tabPage2 = new TabPage();
+            label12 = new Label();
+            RegisterCount_numericUpDown = new NumericUpDown();
+            Clear_button = new Button();
             VerboseLog_checkBox = new CheckBox();
             label11 = new Label();
             RegisterNo_numericUpDown = new NumericUpDown();
@@ -93,6 +96,7 @@
             groupBox4.SuspendLayout();
             groupBox3.SuspendLayout();
             Log_tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)RegisterCount_numericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)RegisterNo_numericUpDown).BeginInit();
             tabPage4.SuspendLayout();
             SuspendLayout();
@@ -238,9 +242,9 @@
             label3.AutoSize = true;
             label3.Location = new Point(5, 83);
             label3.Name = "label3";
-            label3.Size = new Size(114, 15);
+            label3.Size = new Size(153, 15);
             label3.TabIndex = 6;
-            label3.Text = "Serial number (SN)*:";
+            label3.Text = "Logger serial number (SN)*:";
             // 
             // textBox1
             // 
@@ -423,6 +427,9 @@
             // 
             // Log_tabPage2
             // 
+            Log_tabPage2.Controls.Add(label12);
+            Log_tabPage2.Controls.Add(RegisterCount_numericUpDown);
+            Log_tabPage2.Controls.Add(Clear_button);
             Log_tabPage2.Controls.Add(VerboseLog_checkBox);
             Log_tabPage2.Controls.Add(label11);
             Log_tabPage2.Controls.Add(RegisterNo_numericUpDown);
@@ -438,6 +445,37 @@
             Log_tabPage2.Text = "Tests and Log";
             Log_tabPage2.UseVisualStyleBackColor = true;
             // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(237, 39);
+            label12.Name = "label12";
+            label12.Size = new Size(63, 15);
+            label12.TabIndex = 9;
+            label12.Text = "No of Reg:";
+            // 
+            // RegisterCount_numericUpDown
+            // 
+            RegisterCount_numericUpDown.Location = new Point(306, 35);
+            RegisterCount_numericUpDown.Maximum = new decimal(new int[] { 120, 0, 0, 0 });
+            RegisterCount_numericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            RegisterCount_numericUpDown.Name = "RegisterCount_numericUpDown";
+            RegisterCount_numericUpDown.Size = new Size(76, 23);
+            RegisterCount_numericUpDown.TabIndex = 8;
+            RegisterCount_numericUpDown.TextAlign = HorizontalAlignment.Center;
+            RegisterCount_numericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // Clear_button
+            // 
+            Clear_button.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            Clear_button.Location = new Point(6, 467);
+            Clear_button.Name = "Clear_button";
+            Clear_button.Size = new Size(75, 23);
+            Clear_button.TabIndex = 7;
+            Clear_button.Text = "Clear Log";
+            Clear_button.UseVisualStyleBackColor = true;
+            Clear_button.Click += Clear_button_Click;
+            // 
             // VerboseLog_checkBox
             // 
             VerboseLog_checkBox.AutoSize = true;
@@ -452,7 +490,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(304, 10);
+            label11.Location = new Point(99, 39);
             label11.Name = "label11";
             label11.Size = new Size(52, 15);
             label11.TabIndex = 5;
@@ -460,7 +498,7 @@
             // 
             // RegisterNo_numericUpDown
             // 
-            RegisterNo_numericUpDown.Location = new Point(360, 6);
+            RegisterNo_numericUpDown.Location = new Point(155, 35);
             RegisterNo_numericUpDown.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             RegisterNo_numericUpDown.Name = "RegisterNo_numericUpDown";
             RegisterNo_numericUpDown.Size = new Size(76, 23);
@@ -491,11 +529,12 @@
             // Log_textBox
             // 
             Log_textBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Log_textBox.Location = new Point(6, 35);
+            Log_textBox.Location = new Point(6, 65);
             Log_textBox.Multiline = true;
             Log_textBox.Name = "Log_textBox";
+            Log_textBox.ReadOnly = true;
             Log_textBox.ScrollBars = ScrollBars.Both;
-            Log_textBox.Size = new Size(846, 455);
+            Log_textBox.Size = new Size(846, 396);
             Log_textBox.TabIndex = 1;
             // 
             // TestConnections_button
@@ -620,6 +659,7 @@
             groupBox3.PerformLayout();
             Log_tabPage2.ResumeLayout(false);
             Log_tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)RegisterCount_numericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)RegisterNo_numericUpDown).EndInit();
             tabPage4.ResumeLayout(false);
             ResumeLayout(false);
@@ -677,5 +717,8 @@
         private GbbLibWin.OurDataGridViewComboBoxColumn2 Inverter;
         private DataGridViewCheckBoxColumn IsDisabled;
         private System.Windows.Forms.Timer timer1;
+        private Button Clear_button;
+        private Label label12;
+        private NumericUpDown RegisterCount_numericUpDown;
     }
 }

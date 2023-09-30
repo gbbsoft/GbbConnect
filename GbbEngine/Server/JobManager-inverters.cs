@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using GbbEngine.Configuration;
 using GbbEngine.Drivers;
@@ -16,11 +17,14 @@ using GbbLib;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Bcpg;
 using static System.Formats.Asn1.AsnWriter;
+using static GbbLib.Application.StatusBar;
 
 namespace GbbEngine.Server
 {
     public partial class JobManager
     {
+
+        private const int UNIT_NO = 1;
 
         internal async void OurInverterService(Configuration.Parameters Parameters, CancellationToken ct, GbbLib.IOurLog log)
         {
@@ -67,7 +71,7 @@ namespace GbbEngine.Server
         {
             while (!ct.IsCancellationRequested)
             {
-                GetDataFromInverters(Parameters, ct, log);
+                await ProcessInverters(Parameters, ct, log);
 
                 // wait to full minute
                 DateTime nw = DateTime.Now;
@@ -86,7 +90,7 @@ namespace GbbEngine.Server
         /// <param name="ct"></param>
         /// <param name="log"></param>
         /// <returns></returns>                                               7
-        private void GetDataFromInverters(Configuration.Parameters Parameters, CancellationToken ct, GbbLib.IOurLog log)
+        private async Task ProcessInverters(Configuration.Parameters Parameters, CancellationToken ct, GbbLib.IOurLog log)
         {
             foreach (var Plant in Parameters.Plants)
             {
@@ -95,8 +99,38 @@ namespace GbbEngine.Server
                     try
                     {
                         DateTime nw = DateTime.Now;
-                        GetDataFromInverter(Plant, InverterInfo.OurGetInverterInfoByNumber(Plant.InverterNumber), ct, log, nw);
+
+                        // create driver
+                        var Info = InverterInfo.OurGetInverterInfoByNumber(Plant.InverterNumber);
+                        Drivers.IDriver Driver;
+
+                        switch (Info.Driver)
+                        {
+                            case InverterInfo.Drivers.i000_SolarmanV5:
+                                {
+                                    if (Plant.AddressIP == null) throw new ApplicationException("Missing Plant Address!");
+                                    if (Plant.PortNo == null) throw new ApplicationException("Missing Plant PortNumber!");
+                                    if (Plant.SerialNumber == null) throw new ApplicationException("Missing Plant SerialNumber!");
+
+                                    var drv = new SolarmanV5Driver(Plant.AddressIP, Plant.PortNo.Value, Plant.SerialNumber.Value);
+                                    drv.Connect();
+                                    Driver = drv;
+                                }
+                                break;
+
+                            case InverterInfo.Drivers.i999_Random:
+                                Driver = new RandomDriver();
+                                break;
+                            default:
+                                throw new ApplicationException("Uknown driver type: " + Info.Driver);
+                        }
+
+
+                        await GetDataFromInverter(Plant, Info, Driver, ct, log, nw);
                         SaveStatisticFile(Plant, log, nw);
+#if DEBUG
+                        await ProcessSchedulers(Plant, Info, Driver, log, nw);
+#endif
                     }
                     catch (TaskCanceledException)
                     {
@@ -119,40 +153,18 @@ namespace GbbEngine.Server
         /// <param name="ct"></param>
         /// <param name="log"></param>
         /// <exception cref="ApplicationException"></exception>
-        private void GetDataFromInverter(Configuration.Plant Plant, InverterInfo Info, CancellationToken ct, GbbLib.IOurLog log, DateTime nw)
+        private async Task GetDataFromInverter(Configuration.Plant Plant, InverterInfo Info, Drivers.IDriver Driver, CancellationToken ct, GbbLib.IOurLog log, DateTime nw)
         {
             ArgumentNullException.ThrowIfNull(Plant.PlantState);
 
-            // create driver
-            Drivers.IDriver Driver;
-
-            switch(Info.Driver)
-            {
-                case InverterInfo.Drivers.i000_SolarmanV5:
-                    {
-                        if (Plant.AddressIP == null) throw new ApplicationException("Missing Plant Address!");
-                        if (Plant.PortNo == null) throw new ApplicationException("Missing Plant PortNumber!");
-                        if (Plant.SerialNumber == null) throw new ApplicationException("Missing Plant SerialNumber!");
-
-                        var drv = new SolarmanV5Driver(Plant.AddressIP, Plant.PortNo.Value, Plant.SerialNumber.Value);
-                        drv.Connect();
-                        Driver = drv;
-                    }
-                    break;
-
-                case InverterInfo.Drivers.i999_Random:
-                    Driver = new RandomDriver();
-                    break;
-                default:
-                    throw new ApplicationException("Uknown driver type: " + Info.Driver);
-            }
 
             try
             {
 
+                // Pre-Get multi registers
                 Dictionary<int, int> Values = new();
                 if (Info.FastRead1_RegStart != null && Info.FastRead1_RegCount != null)
-                    GetRegisters(Driver, Values, Info.FastRead1_RegStart.Value, Info.FastRead1_RegCount.Value);
+                    await GetRegisters(Driver, Values, Info.FastRead1_RegStart.Value, Info.FastRead1_RegCount.Value);
 
                 // ==============================
                 // decode registers
@@ -162,7 +174,7 @@ namespace GbbEngine.Server
                 // SOC
                 if (Info.RegisterNo_SOC != null)
                 {
-                    Plant.PlantState.SOC = Get2Byte(Info.RegisterNo_SOC.Value, Values, Driver);
+                    Plant.PlantState.SOC = await Get2Byte(Info.RegisterNo_SOC.Value, Values, Driver);
 
                     if (Plant.PlantState.MinSOC == null || Plant.PlantState.SOC < Plant.PlantState.MinSOC)
                         Plant.PlantState.MinSOC = Plant.PlantState.SOC;
@@ -180,7 +192,7 @@ namespace GbbEngine.Server
                 // PVProdCurr
                 if (Info.PVProd_RegNo_Lo != null)
                 {
-                    Plant.PlantState.TotalPVProdCurr = Get4Byte(Info.PVProd_RegNo_Hi, Info.PVProd_RegNo_Lo.Value, Values, Driver);
+                    Plant.PlantState.TotalPVProdCurr = await Get4Byte(Info.PVProd_RegNo_Hi, Info.PVProd_RegNo_Lo.Value, Values, Driver);
                     if (Info.PVProd_Multipler != null)
                         Plant.PlantState.TotalPVProdCurr *= Info.PVProd_Multipler;
                 }
@@ -188,7 +200,7 @@ namespace GbbEngine.Server
                 // TotalFromGridCurr
                 if (Info.FromGrid_RegNo_TotalLo != null)
                 {
-                    Plant.PlantState.TotalFromGridCurr = Get4Byte(Info.FromGrid_RegNo_TotalHi, Info.FromGrid_RegNo_TotalLo.Value, Values, Driver);
+                    Plant.PlantState.TotalFromGridCurr = await Get4Byte(Info.FromGrid_RegNo_TotalHi, Info.FromGrid_RegNo_TotalLo.Value, Values, Driver);
                     if (Info.FromGrid_Multipler != null)
                         Plant.PlantState.TotalFromGridCurr *= Info.FromGrid_Multipler;
                 }
@@ -196,7 +208,7 @@ namespace GbbEngine.Server
                 // TotalToGridCurr
                 if (Info.ToGrid_RegNo_TotalLo != null)
                 {
-                    Plant.PlantState.TotalToGridCurr = Get4Byte(Info.ToGrid_RegNo_TotalHi, Info.ToGrid_RegNo_TotalLo.Value, Values, Driver);
+                    Plant.PlantState.TotalToGridCurr = await Get4Byte(Info.ToGrid_RegNo_TotalHi, Info.ToGrid_RegNo_TotalLo.Value, Values, Driver);
                     if (Info.ToGrid_Multipler != null)
                         Plant.PlantState.TotalToGridCurr *= Info.FromGrid_Multipler;
                 }
@@ -204,7 +216,7 @@ namespace GbbEngine.Server
                 // PVProdCurr
                 if (Info.Load_RegNo_TotalLo != null)
                 {
-                    Plant.PlantState.TotalLoadCurr = Get4Byte(Info.Load_RegNo_TotalHi, Info.Load_RegNo_TotalLo.Value, Values, Driver);
+                    Plant.PlantState.TotalLoadCurr = await Get4Byte(Info.Load_RegNo_TotalHi, Info.Load_RegNo_TotalLo.Value, Values, Driver);
                     if (Info.Load_Multipler != null)
                         Plant.PlantState.TotalLoadCurr *= Info.Load_Multipler;
                 }
@@ -235,21 +247,21 @@ namespace GbbEngine.Server
             
         }
 
-        private int Get4Byte(int? RegNo1, int RegNo2, Dictionary<int, int> Values, IDriver Driver)
+        private async Task<int> Get4Byte(int? RegNo1, int RegNo2, Dictionary<int, int> Values, IDriver Driver)
         {
             if (RegNo1 != null)
-                return Get2Byte(RegNo1.Value, Values, Driver) << 16 + Get2Byte(RegNo2, Values, Driver);
+                return await Get2Byte(RegNo1.Value, Values, Driver) << 16 + await Get2Byte(RegNo2, Values, Driver);
             else
-                return Get2Byte(RegNo2, Values, Driver);
+                return await Get2Byte(RegNo2, Values, Driver);
         }
 
 
-        private int Get2Byte(int RegNo, Dictionary<int, int> Values, IDriver Driver)
+        private async Task<int> Get2Byte(int RegNo, Dictionary<int, int> Values, IDriver Driver)
         {
             int ret;
             if (!Values.TryGetValue(RegNo, out ret))
             {
-                GetRegisters(Driver, Values, RegNo, 1);
+                await GetRegisters(Driver, Values, RegNo, 1);
             }
             return Values[RegNo];
         }
@@ -262,9 +274,9 @@ namespace GbbEngine.Server
         /// <param name="Values"></param>
         /// <param name="RegStart"></param>
         /// <param name="RegCount"></param>
-        private void GetRegisters(IDriver Driver, Dictionary<int, int> Values, int RegStart, int RegCount)
+        private async Task GetRegisters(IDriver Driver, Dictionary<int, int> Values, int RegStart, int RegCount)
         {
-            var responce = Driver.ReadHoldingRegister(unit: 1, (ushort)RegStart, (ushort)RegCount);
+            var responce = await Driver.ReadHoldingRegister(UNIT_NO, (ushort)RegStart, (ushort)RegCount);
             for(var i = 0; i<RegCount; i++)
                 Values.TryAdd(RegStart+i, (responce[2*i]<<8) + responce[2*i+1]);
 
@@ -452,6 +464,130 @@ namespace GbbEngine.Server
             FileName = Path.Combine(FileName,$"Stat_{nw:yyyy-MM-dd}.csv");
 
             return FileName;
+        }
+
+        // ======================================
+        // Send Schedulers to Inverter
+        // ======================================
+
+
+        private async Task ProcessSchedulers(Plant Plant, InverterInfo Info, Drivers.IDriver Driver, IOurLog log, DateTime nw)
+        {
+            if (Plant.PlantState!.SchedulersReadyToProcess)
+            {
+                var Schedulers = Plant.PlantState!.Schedulers!;
+                Plant.PlantState!.SchedulersReadyToProcess = false;
+
+                Dictionary<int, int> Values = new();
+
+                if (Info.Deya_TimeOfUser_RegNo != null)
+                {
+
+                    // Convert Scheduler to Deya TimeOfUse
+                    var TimeOfUse = ConvertSchedulers(Schedulers);
+
+                    // Send TimeOfUse to Inverter
+                    int Offset = 2 * 6;
+
+                    // jeżeli wpisów jest za dużo, to usuwamy wpisy z przeszłości
+                    int CurrHour = nw.Hour * 100;
+                    while (TimeOfUse.Count > 6)
+                    {
+                        if (TimeOfUse[1].FromTime < CurrHour)
+                            TimeOfUse.RemoveAt(0);
+                    }
+
+                    byte[] Tab = new byte[2];
+                    int Pos = 0;
+                    int SrcPos = 0;
+                    Deya_TimeOfUse? Curr = null;
+                    while (Pos < 6)
+                    {
+                        var itm = TimeOfUse[SrcPos];
+
+                        if (itm.FromTime < CurrHour)
+                            Curr = itm;
+
+#if !DEBUG
+                        // Time
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos), Put2Byte(Tab, Pos, itm.FromTime));
+
+                        // Power
+                        if (itm.Power != null)
+                        {
+                            await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + Offset), Put2Byte(Tab, Pos, itm.Power.Value));
+                        }
+
+                        // SOC
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + 3 * Offset), Put2Byte(Tab, Pos, itm.SOC));
+
+                        // Grid Charge
+                        int Value = itm.IsGridCharging? 1 : 0;
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + 4 * Offset), Put2Byte(Tab, Pos, Value));
+
+#endif
+                        // jak jest za mało TimeOfUser, to powtarzamy ostatni do końca
+                        if (SrcPos+1 < TimeOfUse.Count)
+                            SrcPos++;
+                        Pos++;
+                    }
+
+                    if (Curr != null)
+                    {
+                        // IsSellingFirst
+                        if (Info.Deya_WorkMode_RegNo!=null)
+                        {
+                            if (Curr.IsSellingFirst)
+                            {
+                                // read prev Mode
+                                if (Plant.PlantState.PrevDeyaMode == null)
+                                {
+                                    Plant.PlantState.PrevDeyaMode = await Get2Byte(Info.Deya_WorkMode_RegNo.Value, Values, Driver);
+                                }
+                                // change to 0
+                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_WorkMode_RegNo), Put2Byte(Tab, Pos, (int)InverterInfo.Deya_Modes.i00_SellingFirst));
+                            }
+                            else if (Plant.PlantState.PrevDeyaMode != null)
+                            {
+                                // revent to prev
+                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_WorkMode_RegNo), Put2Byte(Tab, Pos, Plant.PlantState.PrevDeyaMode.Value));
+                                Plant.PlantState.PrevDeyaMode= null;
+                            }
+                        }
+
+                        // ZeroChargeA
+                        if (Info.MaxACharge != null)
+                        {
+                            if (Curr.IsZeroChargeA)
+                            {
+                                // read prev ChargeA
+                                if (Plant.PlantState.PrevGridChargeA == null)
+                                {
+                                    Plant.PlantState.PrevGridChargeA = await Get2Byte(Info.MaxACharge.Value, Values, Driver);
+                                }
+                                // change to 0
+                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.MaxACharge), Put2Byte(Tab, Pos, 0));
+                            }
+                            else if (Plant.PlantState.PrevGridChargeA != null)
+                            {
+                                // revent to prev
+                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.MaxACharge), Put2Byte(Tab, Pos, Plant.PlantState.PrevGridChargeA.Value));
+                                Plant.PlantState.PrevGridChargeA = null;
+                            }
+                        }
+                        Plant.PlantState.OurSaveState();
+                    }
+
+                }
+            }
+
+        }
+
+        private byte[] Put2Byte(byte[] Tab, int Pos, int Value)
+        {
+            Tab[0] = (byte)((Value >> 8) & 0xff);
+            Tab[1] = (byte)(Value & 0xff);
+            return Tab;
         }
 
 

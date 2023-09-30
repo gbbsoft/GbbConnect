@@ -105,6 +105,20 @@ namespace GbbConnect
             }
         }
 
+        private void Clear_button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Log_textBox.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                GbbLibWin.Log.ErrMsgBox(this, ex);
+            }
+
+        }
+
 
         // ======================================
         // Plants
@@ -187,7 +201,7 @@ namespace GbbConnect
             throw new ApplicationException($"Exceeption from driver: function: {function}, exception: {exception}");
         }
 
-        private void TestSolarmanV5_button_Click(object sender, EventArgs e)
+        private async void TestSolarmanV5_button_Click(object sender, EventArgs e)
         {
             try
             {
@@ -211,9 +225,18 @@ namespace GbbConnect
                                     byte[] answer = { 0, 66 };
                                     //driver.WriteMultipleRegister(0, 1, 184, answer);
 
-                                    answer = driver.ReadHoldingRegister(1, (ushort)RegisterNo_numericUpDown.Value, 1);
+                                    answer = await driver.ReadHoldingRegister(1, (ushort)RegisterNo_numericUpDown.Value, (ushort)RegisterCount_numericUpDown.Value);
 
-                                    Log($"SOC: {answer[0] * 256 + answer[1]}");
+                                    System.Text.StringBuilder sb = new();
+                                    for (int i = 0; i < RegisterCount_numericUpDown.Value; i++)
+                                    {
+                                        sb.Append(RegisterNo_numericUpDown.Value + i);
+                                        sb.Append('=');
+                                        sb.Append(answer[i * 2] * 256 + answer[i * 2 + 1]);
+                                        sb.Append(", ");
+                                    }
+
+                                    Log($"Answer: {sb.ToString()}");
                                 }
                                 finally
                                 {
@@ -392,7 +415,7 @@ namespace GbbConnect
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-         try
+            try
             {
                 // Prevent Idle-to-Sleep (monitor not affected) (see note above)
                 SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
@@ -402,5 +425,6 @@ namespace GbbConnect
                 GbbLibWin.Log.ErrMsgBox(this, ex);
             }
         }
+
     }
 }

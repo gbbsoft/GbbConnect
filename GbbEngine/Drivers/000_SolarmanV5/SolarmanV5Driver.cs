@@ -83,14 +83,14 @@ namespace GbbEngine.Drivers.SolarmanV5
         //
         //
 
-        public byte[] ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs)
+        public async Task<byte[]> ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs)
         {
             if (numInputs > 125)
                 throw new ApplicationException("Too much registers to read!");
-            return WriteSyncData(CreateReadHeader(unit, startAddress, numInputs, 3));
+            return await WriteSyncData(CreateReadHeader(unit, startAddress, numInputs, 3), false);
         }
 
-        public byte[] WriteMultipleRegister(byte unit, ushort startAddress, byte[] values)
+        public async Task WriteMultipleRegister(byte unit, ushort startAddress, byte[] values)
         {
             if (values.Length > 250)
                 throw new ApplicationException("Too much registers to write!");
@@ -103,8 +103,7 @@ namespace GbbEngine.Drivers.SolarmanV5
             var crc = GetCRC(data);
             data[data.Length - 2] = crc[0];
             data[data.Length - 1] = crc[1];
-            return WriteSyncData(data);
-
+            await WriteSyncData(data, true);
         }
 
         // ------------------------------------------------------------------------
@@ -119,8 +118,8 @@ namespace GbbEngine.Drivers.SolarmanV5
             data[2] = _adr[0];				// Start address
             data[3] = _adr[1];				// Start address
             byte[] _length = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)length));
-            data[4] = _length[0];			// Number of data to read
-            data[5] = _length[1];			// Number of data to read
+            data[4] = _length[0];			// Number of registers to read 
+            data[5] = _length[1];			// Number of registers to read
             var crc = GetCRC(data);
             data[6] = crc[0];
             data[7] = crc[1];
@@ -141,8 +140,8 @@ namespace GbbEngine.Drivers.SolarmanV5
             if (function >= 15)
             {
                 byte[] _cnt = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder((short)numData));
-                data[4] = _cnt[0];			// Number of bytes
-                data[5] = _cnt[1];			// Number of bytes
+                data[4] = _cnt[0];			// Number of registers
+                data[5] = _cnt[1];			// Number of registers
                 data[6] = (byte)(numBytes);
             }
             return data;
@@ -177,7 +176,11 @@ namespace GbbEngine.Drivers.SolarmanV5
 
         // ------------------------------------------------------------------------
         // Write data and and wait for response
-        private byte[] WriteSyncData(byte[] write_data)
+        private const int WAIT_READ_TIME_MS = 50;
+        private const int WAIT_WRITE_TIME_MS = 50;
+        private DateTime? LastSend;
+
+        private async Task<byte[]> WriteSyncData(byte[] write_data, bool iswrite)
         {
             ArgumentNullException.ThrowIfNull(Socket);
 
@@ -186,6 +189,21 @@ namespace GbbEngine.Drivers.SolarmanV5
             if (Socket.Connected)
             {
                 //tb.AppendText($"{DateTime.Now}: Send ModBus: {BitConverter.ToString(write_data)}\r\n");
+
+                // up to 50ms delay
+                if (LastSend!=null)
+                {
+                    int DelayMs;
+                    if (iswrite)
+                        DelayMs = WAIT_READ_TIME_MS;
+                    else
+                        DelayMs = WAIT_READ_TIME_MS;
+
+                    var ms = (int)(LastSend.Value.AddSeconds(DelayMs) - DateTime.Now).TotalMilliseconds;
+                    if (ms > 0)
+                        await Task.Delay(ms); 
+                }
+
 
                 var Frame = new SolarmanFrame(GetNextSequenceNumber(), SerialNumber);
                 var OutBuf = Frame.CreateFrame(write_data);
@@ -235,6 +253,9 @@ namespace GbbEngine.Drivers.SolarmanV5
                     data = new byte[len];
                     Array.Copy(Buf, 3, data, 0, len);
                 }
+
+                LastSend = DateTime.Now;
+
                 return data;
             }
             else

@@ -284,7 +284,10 @@ namespace GbbEngine.Server
                             break;
 
                         case "SetSchedulers":
-                            // TODO!
+                            // save schedulers to send to inverters
+                            Plant.PlantState.Schedulers = Request.Schedulers;
+                            Plant.PlantState.SchedulersReadyToProcess = true;
+                            Plant.PlantState.OurSaveState();
                             break;
 
                         default:

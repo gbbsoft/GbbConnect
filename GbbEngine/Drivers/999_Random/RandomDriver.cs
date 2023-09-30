@@ -17,7 +17,7 @@ namespace GbbEngine.Drivers.Random
         {
         }
 
-        public byte[] ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs)
+        public Task<byte[]> ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs)
         {
             if (startAddress != 0 && numInputs != 5)
                 throw new ArgumentException("Wrong arguments!");
@@ -35,12 +35,12 @@ namespace GbbEngine.Drivers.Random
                 PutValue(ret, i, q);
             }
             PrevRet = ret;
-            return ret;
+            return Task.FromResult(ret);
         }
 
-        public byte[] WriteMultipleRegister(byte unit, ushort startAddress, byte[] values)
+        public Task WriteMultipleRegister(byte unit, ushort startAddress, byte[] values)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         private void PutValue(byte[] ret, int pos, int Value)

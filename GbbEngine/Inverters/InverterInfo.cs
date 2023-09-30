@@ -26,9 +26,8 @@ namespace GbbEngine.Inverters
             this.Driver = _driver;
         }
 
-
-        
-
+        // ======================================
+        // Read
 
         public int? RegisterNo_SOC;
 
@@ -55,6 +54,26 @@ namespace GbbEngine.Inverters
         /// </summary>
         public int? FastRead1_RegStart;
         public int? FastRead1_RegCount;
+
+
+        // ======================================
+        // Write
+
+        public int? MaxACharge;
+        public int? Deya_TimeOfUser_RegNo;
+        public int? Deya_WorkMode_RegNo;
+
+        public enum Deya_Modes
+        {
+            i00_SellingFirst=0,
+            i01_ZeroExportToLoad=1,
+            i02_ZeroExportToCT=2,
+        }
+
+
+        // ======================================
+        // Creating list
+        // ======================================
 
 
         static List<InverterInfo>? Cache;
@@ -85,7 +104,11 @@ namespace GbbEngine.Inverters
                         Load_Multipler = 0.1m,
 
                         FastRead1_RegStart = 522,
-                        FastRead1_RegCount = 528-535+1,
+                        FastRead1_RegCount = 535-522+1,
+
+                        MaxACharge = 108,
+                        Deya_TimeOfUser_RegNo = 148,
+                        Deya_WorkMode_RegNo = 142,
                     },
 #if DEBUG
                     new InverterInfo(999, "Random", Drivers.i999_Random)
@@ -106,6 +129,9 @@ namespace GbbEngine.Inverters
 
                         FastRead1_RegStart = 0,
                         FastRead1_RegCount = 5,
+
+                        // no write!
+
                     },
 
 #endif

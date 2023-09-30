@@ -42,8 +42,12 @@ namespace GbbEngine.Server
 
         //EventWaitHandle
 
+        public DateTime SchedulerLastprocess {  get; set; }
         public bool SchedulersReadyToProcess {  get; set; }
         public List<GbbConnectProtocol.Request_Scheduler>? Schedulers { get; set; }
+
+        public int? PrevGridChargeA { get; set; }
+        public int? PrevDeyaMode {  get; set; }
 
 
 
@@ -77,6 +81,7 @@ namespace GbbEngine.Server
         // ======================================
         // Save/Load State
         // ======================================
+        internal object SaveFileLoc = new();
 
         public void OurSaveState()
         {
@@ -86,7 +91,12 @@ namespace GbbEngine.Server
 
 
             // save
-            File.WriteAllText(OurGetFileName(Plant!), JsonSerializer.Serialize(this, SerOpt));
+            var FileName = OurGetFileName(Plant!);
+            var json = JsonSerializer.Serialize(this, SerOpt);
+            lock (SaveFileLoc)
+            {
+                File.WriteAllText(FileName, json);
+            }
         }
 
         public static PlantState OurLoadState(Plant plant)
@@ -100,7 +110,8 @@ namespace GbbEngine.Server
                 {
                     try
                     {
-                        ret = JsonSerializer.Deserialize<PlantState>(File.ReadAllText(Filename), new JsonSerializerOptions() { IncludeFields = false });
+                        var s = File.ReadAllText(Filename);
+                        ret = JsonSerializer.Deserialize<PlantState>(s, new JsonSerializerOptions() { IncludeFields = false });
                     }
                     catch
                     {

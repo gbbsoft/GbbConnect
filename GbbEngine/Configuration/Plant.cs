@@ -35,6 +35,7 @@ namespace GbbEngine.Configuration
         private long? m_SerialNumber;
 
 
+
         //[ObservableProperty]
         //private string? m_Password;
 
@@ -163,18 +164,19 @@ namespace GbbEngine.Configuration
                 ret.AddressIP = xml.GetAttribute("AddressIP");
 
                 s = xml.GetAttribute("PortNo");
-
                 if (s != null && int.TryParse(s, out i))
                     ret.PortNo = i;
-                s = xml.GetAttribute("SerialNumber");
 
+                s = xml.GetAttribute("SerialNumber");
                 if (s != null && long.TryParse(s, out l))
                     ret.SerialNumber = l;
 
                 ret.GbbVictronWeb_UserEmail = xml.GetAttribute("GbbVictronWeb_UserEmail");
+
                 s = xml.GetAttribute("GbbVictronWeb_PlantId");
                 if (s != null && int.TryParse(s, out i))
                     ret.GbbVictronWeb_PlantId = i;
+
                 ret.GbbVictronWeb_PlantToken = xml.GetAttribute("GbbVictronWeb_PlantToken");
 
                 //s = xml.GetAttribute("Password");

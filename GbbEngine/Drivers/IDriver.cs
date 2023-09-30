@@ -8,8 +8,8 @@ namespace GbbEngine.Drivers
 {
     internal interface IDriver
     {
-        public byte[] ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs);
-        public byte[] WriteMultipleRegister(byte unit, ushort startAddress, byte[] values);
+        public Task<byte[]> ReadHoldingRegister(byte unit, ushort startAddress, ushort numInputs);
+        public Task WriteMultipleRegister(byte unit, ushort startAddress, byte[] values);
 
         public void Dispose();
 
