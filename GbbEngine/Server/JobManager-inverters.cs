@@ -483,11 +483,14 @@ namespace GbbEngine.Server
                 if (Info.Deya_TimeOfUser_RegNo != null)
                 {
 
+                    // =============================
                     // Convert Scheduler to Deya TimeOfUse
+                    // =============================
                     var TimeOfUse = ConvertSchedulers(Schedulers);
 
+                    // =============================
                     // Send TimeOfUse to Inverter
-                    int Offset = 2 * 6;
+                    // =============================
 
                     // jeżeli wpisów jest za dużo, to usuwamy wpisy z przeszłości
                     int CurrHour = nw.Hour * 100;

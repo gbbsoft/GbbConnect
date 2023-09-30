@@ -64,6 +64,7 @@ namespace GbbEngine.Server
                 switch(itm.Operation)
                 {
                     case "Normal":
+                        Next.IsGridCharging = false;
                         Next.IsSellingFirst = false;
                         Next.SOC = 5;
                         Next.Power = null;
@@ -71,6 +72,7 @@ namespace GbbEngine.Server
                         break;
 
                     case "Charge":
+                        Next.IsGridCharging = true;
                         Next.IsSellingFirst = false;
                         if (itm.SOC!=null)
                             Next.SOC = (int)itm.SOC.Value;
@@ -79,6 +81,7 @@ namespace GbbEngine.Server
                         break;
 
                     case "Discharge":
+                        Next.IsGridCharging = false;
                         Next.IsSellingFirst = true;
                         if (itm.SOC!=null)
                             Next.SOC = (int)itm.SOC.Value;
@@ -88,6 +91,7 @@ namespace GbbEngine.Server
                         break;
 
                     case "DisableDischarge":
+                        Next.IsGridCharging = false;
                         Next.IsSellingFirst = true;
                         Next.SOC = 5;
                         Next.Power = null;
