@@ -83,7 +83,7 @@ namespace GbbEngine.Inverters
             {
                 Cache = new List<InverterInfo>()
                 {
-                    new InverterInfo(0, "Deya SUN-5/6/8/10/12K-SG04LP3", Drivers.i000_SolarmanV5)
+                    new InverterInfo(0, "Deya SUN-xK-SG0xLP3 - 3 fazowy", Drivers.i000_SolarmanV5)
                     {
                         RegisterNo_SOC = 588,
 
@@ -109,6 +109,33 @@ namespace GbbEngine.Inverters
                         MaxACharge = 108,
                         Deya_TimeOfUser_RegNo = 148,
                         Deya_WorkMode_RegNo = 142,
+                    },
+                    new InverterInfo(1, "Deya SUN-xK-SG0xLP1 - 1 fazowy", Drivers.i000_SolarmanV5)
+                    {
+                        RegisterNo_SOC = 184,
+
+                        PVProd_RegNo_Lo = 96,
+                        PVProd_RegNo_Hi = 97,
+                        PVProd_Multipler = 0.1m,
+
+                        FromGrid_RegNo_TotalLo = 78,
+                        FromGrid_RegNo_TotalHi = 79,
+                        FromGrid_Multipler = 0.1m,
+
+                        ToGrid_RegNo_TotalLo = 81,
+                        ToGrid_RegNo_TotalHi = 82,
+                        ToGrid_Multipler = 0.1m,
+
+                        Load_RegNo_TotalLo = 85,
+                        Load_RegNo_TotalHi = 86,
+                        Load_Multipler = 0.1m,
+
+                        FastRead1_RegStart = 78,
+                        FastRead1_RegCount = 86-78+1,
+
+                        MaxACharge = 210,
+                        Deya_TimeOfUser_RegNo = 250,
+                        Deya_WorkMode_RegNo = 244, // limit control function
                     },
 #if DEBUG
                     new InverterInfo(999, "Random", Drivers.i999_Random)
