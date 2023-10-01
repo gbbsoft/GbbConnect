@@ -1,6 +1,10 @@
+using System.Diagnostics.Eventing.Reader;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using GbbEngine.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 
 namespace GbbConnect
 {
@@ -147,6 +151,10 @@ namespace GbbConnect
 
         }
 
+        // ======================================
+        // Tests
+        // ======================================
+
         private void TestConnections_button_Click(object sender, EventArgs e)
         {
             try
@@ -266,21 +274,51 @@ namespace GbbConnect
                 if (GbbLibWin.Log.LogMsgBox(this, "Do you want to search for SolarmanV5?", MessageBoxButtons.YesNo, DialogResult.Yes, Microsoft.Extensions.Logging.LogLevel.Information) == DialogResult.Yes)
                 {
 
-                    Log($"{DateTime.Now}: Start search (5 sec)");
-                    var ll = GbbEngine.Drivers.SolarmanV5.SolarmanV5Driver.OurSearchSolarman();
+                    Log($"{DateTime.Now}: Start searching");
 
-                    Log($"{DateTime.Now}: Result: (IpAddress, MAC address, SerialNo)");
-                    if (ll.Count == 0)
-                        Log("Nothing found...");
-                    else
+                    int Counter = 0;
+                    foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
                     {
-                        Log($"==========================");
-                        foreach (var itm in ll)
-                        {
-                            Log(itm);
-                        }
-                        Log($"==========================");
+                        if (nic.OperationalStatus== OperationalStatus.Up)
+                            foreach(var ua in nic.GetIPProperties().UnicastAddresses)
+                            {
+                                if (ua.Address.AddressFamily==AddressFamily.InterNetwork)
+                                {
+                                    Log($"{DateTime.Now}: Search Network: {ua.Address.ToString()} (5sec)");
+
+                                    try
+                                    {
+                                        var ll = GbbEngine.Drivers.SolarmanV5.SolarmanV5Driver.OurSearchSolarman(ua.Address);
+
+                                        if (ll.Count == 0)
+                                            Log($"{DateTime.Now}: Nothing found...");
+                                        else
+                                        {
+                                            Log($"{DateTime.Now}: ==========================");
+                                            Log($"{DateTime.Now}: IpAddress, MAC address, SerialNo");
+                                            foreach (var itm in ll)
+                                            {
+                                                Log($"{DateTime.Now}: {itm}");
+                                                Counter++;
+                                            }
+                                            Log($"{DateTime.Now}: ==========================");
+                                        }
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        Log($"{DateTime.Now}: ERROR: {ex.Message}");
+                                    }
+                                }
+
+
+                            }
+                            
                     }
+
+                    Log($"{DateTime.Now}: Done. Found {Counter} inverters.");
+
+
+
 
                 }
 

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection.Emit;
 using System.Text;
@@ -283,13 +284,15 @@ namespace GbbEngine.Drivers.SolarmanV5
         // Scan
         //
 
-        public static List<string> OurSearchSolarman()
+        public static List<string> OurSearchSolarman(IPAddress address)
         {
             var ret = new List<string>();
 
+
             int PORT = 48899;
             UdpClient udpClient = new UdpClient();
-            udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, PORT));
+            var ep = new IPEndPoint(address, PORT);
+            udpClient.Client.Bind(ep);
             udpClient.EnableBroadcast = true;
             udpClient.Client.SendTimeout = 5000;
             udpClient.Client.ReceiveTimeout = 5000;
@@ -308,7 +311,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                         var s = Encoding.ASCII.GetString(recvBuffer);
                         if (s != request)
                         {
-                            ret.Add(BitConverter.ToString(recvBuffer));
+                            //ret.Add(BitConverter.ToString(recvBuffer));
                             ret.Add(s);
                         }
 
