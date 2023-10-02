@@ -103,19 +103,16 @@ namespace GbbEngine.Server
         {
             PlantState? ret = null;
 
-            if (plant.GbbVictronWeb_PlantId == null)
+            var Filename = OurGetFileName(plant);
+            if (File.Exists(Filename))
             {
-                var Filename = OurGetFileName(plant);
-                if (File.Exists(Filename))
+                try
                 {
-                    try
-                    {
-                        var s = File.ReadAllText(Filename);
-                        ret = JsonSerializer.Deserialize<PlantState>(s, new JsonSerializerOptions() { IncludeFields = false });
-                    }
-                    catch
-                    {
-                    }
+                    var s = File.ReadAllText(Filename);
+                    ret = JsonSerializer.Deserialize<PlantState>(s, new JsonSerializerOptions() { IncludeFields = false });
+                }
+                catch
+                {
                 }
             }
 

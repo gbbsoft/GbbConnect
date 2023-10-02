@@ -17,11 +17,6 @@ namespace GbbEngine.Server
             foreach (var plant in Parameters.Plants)
             {
                 plant.PlantState = PlantState.OurLoadState(plant);
-
-#if DEBUG && SIMULATE_SOC
-                var rnd = new Random();
-                plant.PlantState.SOC = rnd.Next(100);
-#endif
             }
 
 

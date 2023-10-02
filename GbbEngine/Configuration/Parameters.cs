@@ -11,7 +11,6 @@ namespace GbbEngine.Configuration
 {
     public partial class Parameters : ObservableObject
     {
-        public static bool IsVerboseLog;
 
         // ======================================
         public PlantList Plants { get; set; } = new();
@@ -20,14 +19,19 @@ namespace GbbEngine.Configuration
         //private Plant? m_CurrPlant;
 
         [ObservableProperty]
-        private string? m_GbbVictronWeb_Mqtt_Address;
+        private string? m_GbbVictronWeb_Mqtt_Address = "gbbconnect-mqtt.gbbsoft.pl";
 
         [ObservableProperty]
-        private int? m_GbbVictronWeb_Mqtt_Port;
+        private int? m_GbbVictronWeb_Mqtt_Port = 8883;
 
         [ObservableProperty]
         private bool m_Server_AutoStart;
 
+        [ObservableProperty]
+        private bool m_IsVerboseLog;
+
+        [ObservableProperty]
+        private bool m_IsDriverLog;
 
 
 
@@ -47,6 +51,8 @@ namespace GbbEngine.Configuration
                 xml.WriteAttributeString("GbbVictronWeb_Mqtt_Port", GbbVictronWeb_Mqtt_Port.ToString());
 
             xml.WriteAttributeString("Server_AutoStart", Server_AutoStart ? "1" : "0");
+            xml.WriteAttributeString("IsVerboseLog", IsVerboseLog ? "1" : "0");
+            xml.WriteAttributeString("IsDriverLog", IsDriverLog ? "1" : "0");
 
 
             //if (CurrPlant!= null)
@@ -72,18 +78,22 @@ namespace GbbEngine.Configuration
                 int i;
 
                 ret.GbbVictronWeb_Mqtt_Address = xml.GetAttribute("GbbVictronWeb_Mqtt_Address");
-                if (ret.GbbVictronWeb_Mqtt_Address == null)
-                    ret.GbbVictronWeb_Mqtt_Address = "gbbconnect-mqtt.gbbsoft.pl";
 
                 s = xml.GetAttribute("GbbVictronWeb_Mqtt_Port");
                 if (s != null && int.TryParse(s, out i))
                     ret.GbbVictronWeb_Mqtt_Port = i;
-                else
-                    ret.GbbVictronWeb_Mqtt_Port = 8883;
 
                 s = xml.GetAttribute("Server_AutoStart");
                 if (s != null)
                     ret.Server_AutoStart = s=="1";
+
+                s = xml.GetAttribute("IsVerboseLog");
+                if (s != null)
+                    ret.IsVerboseLog= s=="1";
+
+                s = xml.GetAttribute("IsDriverLog");
+                if (s != null)
+                    ret.IsDriverLog= s=="1";
 
 
                 //// for later

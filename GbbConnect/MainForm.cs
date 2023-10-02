@@ -97,17 +97,6 @@ namespace GbbConnect
 
         }
 
-        private void VerboseLog_checkBox_CheckedChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                GbbEngine.Configuration.Parameters.IsVerboseLog = this.VerboseLog_checkBox.Checked;
-            }
-            catch (Exception ex)
-            {
-                GbbLibWin.Log.ErrMsgBox(this, ex);
-            }
-        }
 
         private void Clear_button_Click(object sender, EventArgs e)
         {
@@ -223,7 +212,7 @@ namespace GbbConnect
                             {
 
                                 Log($"Plant: {itm.Name}");
-                                var driver = new GbbEngine.Drivers.SolarmanV5.SolarmanV5Driver(itm.AddressIP, itm.PortNo.Value, itm.SerialNumber ?? 0);
+                                var driver = new GbbEngine.Drivers.SolarmanV5.SolarmanV5Driver(Program.Parameters, itm.AddressIP, itm.PortNo.Value, itm.SerialNumber ?? 0, null);
                                 try
                                 {
 
@@ -279,10 +268,10 @@ namespace GbbConnect
                     int Counter = 0;
                     foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
                     {
-                        if (nic.OperationalStatus== OperationalStatus.Up)
-                            foreach(var ua in nic.GetIPProperties().UnicastAddresses)
+                        if (nic.OperationalStatus == OperationalStatus.Up)
+                            foreach (var ua in nic.GetIPProperties().UnicastAddresses)
                             {
-                                if (ua.Address.AddressFamily==AddressFamily.InterNetwork)
+                                if (ua.Address.AddressFamily == AddressFamily.InterNetwork)
                                 {
                                     Log($"{DateTime.Now}: Search Network: {ua.Address.ToString()} (5sec)");
 
@@ -304,7 +293,7 @@ namespace GbbConnect
                                             Log($"{DateTime.Now}: ==========================");
                                         }
                                     }
-                                    catch(Exception ex)
+                                    catch (Exception ex)
                                     {
                                         Log($"{DateTime.Now}: ERROR: {ex.Message}");
                                     }
@@ -312,7 +301,7 @@ namespace GbbConnect
 
 
                             }
-                            
+
                     }
 
                     Log($"{DateTime.Now}: Done. Found {Counter} inverters.");

@@ -66,6 +66,7 @@
             textBox9 = new TextBox();
             label10 = new Label();
             Log_tabPage2 = new TabPage();
+            DriverLog_checkBox = new CheckBox();
             label12 = new Label();
             RegisterCount_numericUpDown = new NumericUpDown();
             Clear_button = new Button();
@@ -427,6 +428,7 @@
             // 
             // Log_tabPage2
             // 
+            Log_tabPage2.Controls.Add(DriverLog_checkBox);
             Log_tabPage2.Controls.Add(label12);
             Log_tabPage2.Controls.Add(RegisterCount_numericUpDown);
             Log_tabPage2.Controls.Add(Clear_button);
@@ -444,6 +446,17 @@
             Log_tabPage2.TabIndex = 1;
             Log_tabPage2.Text = "Tests and Log";
             Log_tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // DriverLog_checkBox
+            // 
+            DriverLog_checkBox.AutoSize = true;
+            DriverLog_checkBox.DataBindings.Add(new Binding("Checked", ParametersBindingSource, "IsDriverLog", true, DataSourceUpdateMode.OnPropertyChanged));
+            DriverLog_checkBox.Location = new Point(656, 34);
+            DriverLog_checkBox.Name = "DriverLog_checkBox";
+            DriverLog_checkBox.Size = new Size(107, 19);
+            DriverLog_checkBox.TabIndex = 10;
+            DriverLog_checkBox.Text = "Driver level Log";
+            DriverLog_checkBox.UseVisualStyleBackColor = true;
             // 
             // label12
             // 
@@ -479,13 +492,13 @@
             // VerboseLog_checkBox
             // 
             VerboseLog_checkBox.AutoSize = true;
-            VerboseLog_checkBox.Location = new Point(741, 9);
+            VerboseLog_checkBox.DataBindings.Add(new Binding("Checked", ParametersBindingSource, "IsVerboseLog", true, DataSourceUpdateMode.OnPropertyChanged));
+            VerboseLog_checkBox.Location = new Point(656, 9);
             VerboseLog_checkBox.Name = "VerboseLog_checkBox";
             VerboseLog_checkBox.Size = new Size(90, 19);
             VerboseLog_checkBox.TabIndex = 6;
             VerboseLog_checkBox.Text = "Verbose Log";
             VerboseLog_checkBox.UseVisualStyleBackColor = true;
-            VerboseLog_checkBox.CheckedChanged += VerboseLog_checkBox_CheckedChanged;
             // 
             // label11
             // 
@@ -508,7 +521,7 @@
             // 
             // Search_button
             // 
-            Search_button.Location = new Point(486, 6);
+            Search_button.Location = new Point(401, 6);
             Search_button.Name = "Search_button";
             Search_button.Size = new Size(240, 23);
             Search_button.TabIndex = 3;
@@ -720,5 +733,6 @@
         private Button Clear_button;
         private Label label12;
         private NumericUpDown RegisterCount_numericUpDown;
+        private CheckBox DriverLog_checkBox;
     }
 }

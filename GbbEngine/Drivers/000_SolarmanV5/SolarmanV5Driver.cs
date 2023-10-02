@@ -2,6 +2,7 @@
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading;
 
@@ -10,7 +11,10 @@ namespace GbbEngine.Drivers.SolarmanV5
     public class SolarmanV5Driver : IDisposable , IDriver
     {
 
-        public int Timeout { get; set; } = 500;
+        public int Timeout { get; set; } = 5000; // 5 sec
+
+        Configuration.Parameters Parameters;
+        GbbLib.IOurLog? OurLog;
 
         private string IpAddress;
         private int PortNumber;
@@ -18,11 +22,13 @@ namespace GbbEngine.Drivers.SolarmanV5
 
         private Socket? Socket;
 
-        public SolarmanV5Driver(string _IPAddress, int _PortNumber, long _SerialNumber)
+        public SolarmanV5Driver( Configuration.Parameters _Parameters, string _IPAddress, int _PortNumber, long _SerialNumber, GbbLib.IOurLog? ourLog)
         {
+            Parameters = _Parameters;
             IpAddress = _IPAddress;
             PortNumber = _PortNumber;
             SerialNumber = _SerialNumber;
+            OurLog = ourLog;
 
             Connect();
         }
@@ -177,7 +183,7 @@ namespace GbbEngine.Drivers.SolarmanV5
 
         // ------------------------------------------------------------------------
         // Write data and and wait for response
-        private const int WAIT_READ_TIME_MS = 50; // 50ms
+        private const int WAIT_READ_TIME_MS = 100; // 50ms
         private const int WAIT_WRITE_TIME_MS = 3000; // 3s
         private DateTime? LastSend;
 
@@ -200,33 +206,59 @@ namespace GbbEngine.Drivers.SolarmanV5
                     else
                         DelayMs = WAIT_READ_TIME_MS;
 
-                    var ms = (int)(LastSend.Value.AddSeconds(DelayMs) - DateTime.Now).TotalMilliseconds;
+                    var ms = (int)(LastSend.Value.AddMilliseconds(DelayMs) - DateTime.Now).TotalMilliseconds;
                     if (ms > 0)
-                        await Task.Delay(ms); 
+                    {
+                        if (Parameters.IsDriverLog && OurLog != null)
+                        {
+                            OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Delay: {ms}ms");
+                        }
+                        await Task.Delay(ms);
+                    }
                 }
 
-
+                // Prepare Frame
+                if (Parameters.IsDriverLog && OurLog != null)
+                {
+                    OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Send ModBus: {BitConverter.ToString(write_data)}");
+                }
                 var Frame = new SolarmanFrame(GetNextSequenceNumber(), SerialNumber);
                 var OutBuf = Frame.CreateFrame(write_data);
-                //tb.AppendText($"{DateTime.Now}: Send: {BitConverter.ToString(OutBuf)}\r\n");
+
+                // Send
+                //if (Parameters.IsDriverLog && OurLog!=null)
+                //{
+                //    OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Send SolarmanV5: {BitConverter.ToString(OutBuf)}");
+                //}
                 int bytesSent = Socket.Send(OutBuf);
 
+                // Receive
                 byte[] buffer = new byte[1024];
-                int bytesReceived = Socket.Receive(buffer);
+                int bytesReceived = 0;
+                bytesReceived = Socket.Receive(buffer);
                 if (bytesReceived == 0) 
-                    throw new ApplicationException("Connection Lost");
+                    throw new ApplicationException("Connection Lost (received 0 bytes)");
                 byte[] InBuf = new byte[bytesReceived];
                 Buffer.BlockCopy(buffer, 0, InBuf, 0, bytesReceived);
-                //tb.AppendText($"{DateTime.Now}: Received: {BitConverter.ToString(InBuf)}\r\n");
+                //if (Parameters.IsDriverLog && OurLog != null)
+                //{
+                //    OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received SolarmanV5: {BitConverter.ToString(InBuf)}");
+                //}
 
+                // Get ModBUs frame
                 Buf = Frame.GetModBusFrame(InBuf);
-                //tb.AppendText($"{DateTime.Now}: Received ModBus: {BitConverter.ToString(Buf)}\r\n");
+                if (Parameters.IsDriverLog && OurLog != null)
+                {
+                    OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
+                }
 
+                // Check Modbus CRC
                 var crc = GetCRC(Buf);
                 if (crc[0] != Buf[Buf.Length-2]
                  || crc[1] != Buf[Buf.Length-1])
                     throw new ApplicationException("SolarmanV5: Wrong CRC!");
 
+                // get function
                 byte function = Buf[1];
                 byte[] data;
 

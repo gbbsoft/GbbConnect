@@ -89,7 +89,7 @@ namespace GbbEngine.Server
         /// <param name="Parameters"></param>
         /// <param name="ct"></param>
         /// <param name="log"></param>
-        /// <returns></returns>                                               7
+        /// <returns></returns>
         private async Task ProcessInverters(Configuration.Parameters Parameters, CancellationToken ct, GbbLib.IOurLog log)
         {
             foreach (var Plant in Parameters.Plants)
@@ -112,7 +112,7 @@ namespace GbbEngine.Server
                                     if (Plant.PortNo == null) throw new ApplicationException("Missing Plant PortNumber!");
                                     if (Plant.SerialNumber == null) throw new ApplicationException("Missing Plant SerialNumber!");
 
-                                    var drv = new SolarmanV5Driver(Plant.AddressIP, Plant.PortNo.Value, Plant.SerialNumber.Value);
+                                    var drv = new SolarmanV5Driver(Parameters, Plant.AddressIP, Plant.PortNo.Value, Plant.SerialNumber.Value, log);
                                     drv.Connect();
                                     Driver = drv;
                                 }
@@ -126,7 +126,7 @@ namespace GbbEngine.Server
                         }
 
 
-                        await GetDataFromInverter(Plant, Info, Driver, ct, log, nw);
+                        await GetDataFromInverter(Parameters, Plant, Info, Driver, ct, log, nw);
                         SaveStatisticFile(Plant, log, nw);
 #if DEBUG
                         await ProcessSchedulers(Plant, Info, Driver, log, nw);
@@ -153,7 +153,7 @@ namespace GbbEngine.Server
         /// <param name="ct"></param>
         /// <param name="log"></param>
         /// <exception cref="ApplicationException"></exception>
-        private async Task GetDataFromInverter(Configuration.Plant Plant, InverterInfo Info, Drivers.IDriver Driver, CancellationToken ct, GbbLib.IOurLog log, DateTime nw)
+        private async Task GetDataFromInverter(Configuration.Parameters Parameters, Configuration.Plant Plant, InverterInfo Info, Drivers.IDriver Driver, CancellationToken ct, GbbLib.IOurLog log, DateTime nw)
         {
             ArgumentNullException.ThrowIfNull(Plant.PlantState);
 
@@ -223,7 +223,7 @@ namespace GbbEngine.Server
 
                 Plant.PlantState.TimeOfCurr = nw;
 
-                if (Configuration.Parameters.IsVerboseLog)
+                if (Parameters.IsVerboseLog)
                 {
                     decimal? AvrSOC = null;
                     if (Plant.PlantState.CountSOC!=0)
@@ -250,7 +250,7 @@ namespace GbbEngine.Server
         private async Task<int> Get4Byte(int? RegNoHi, int RegNoLo, Dictionary<int, int> Values, IDriver Driver)
         {
             if (RegNoHi != null)
-                return await Get2Byte(RegNoLo, Values, Driver)+ await Get2Byte(RegNoHi.Value, Values, Driver) << 16 ; // first lo, so hi will be took together
+                return await Get2Byte(RegNoLo, Values, Driver)+ (await Get2Byte(RegNoHi.Value, Values, Driver) << 16) ; // first lo, so hi will be took together
             else
                 return await Get2Byte(RegNoLo, Values, Driver);
         }
@@ -419,7 +419,6 @@ namespace GbbEngine.Server
             Plant.PlantState.TotalLoadStart = Plant.PlantState.TotalLoadCurr;
             Plant.PlantState.OurSaveState();
 
-            Plant.PlantState.TimeOfStart = nw;
 
             log.OurLog(LogLevel.Information,
                 $"{Plant.Name}: {nw}: Hour start: TotalPVProd={Plant.PlantState.TotalPVProdCurr}, TotalFromGrid={Plant.PlantState.TotalFromGridCurr}, " +

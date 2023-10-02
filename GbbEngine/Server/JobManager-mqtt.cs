@@ -121,7 +121,7 @@ namespace GbbEngine.Server
                                 var client = mqttFactory.CreateMqttClient();
 
                                 // callback
-                                client.ApplicationMessageReceivedAsync += e => { return MqttClient_MessageReceivedAsync(e, plant, log); };
+                                client.ApplicationMessageReceivedAsync += e => { return MqttClient_MessageReceivedAsync(Parameters, e, plant, log); };
 
                                 // Use builder classes where possible in this project.
                                 await ConnectToMqtt(Parameters, plant, client, ct, log);
@@ -170,7 +170,7 @@ namespace GbbEngine.Server
                             if (plant.PlantState!.MqttClient!= null && plant.PlantState!.MqttClient.IsConnected)
                             {
 
-                                if (Configuration.Parameters.IsVerboseLog)
+                                if (Parameters.IsVerboseLog)
                                 {
                                     log.OurLog(LogLevel.Information, $"{plant.Name}: Mqtt: Sending keepalive");
                                 }
@@ -232,7 +232,7 @@ namespace GbbEngine.Server
         // ======================================
 
 
-        private async Task MqttClient_MessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg, Configuration.Plant Plant, GbbLib.IOurLog log)
+        private async Task MqttClient_MessageReceivedAsync(Configuration.Parameters Parameters, MqttApplicationMessageReceivedEventArgs arg, Configuration.Plant Plant, GbbLib.IOurLog log)
         {
             string? Operation = null;
 
@@ -244,7 +244,7 @@ namespace GbbEngine.Server
             try
             {
                 var seg = arg.ApplicationMessage.PayloadSegment;
-                if (Configuration.Parameters.IsVerboseLog)
+                if (Parameters.IsVerboseLog)
                 {
                     log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Received request: {Encoding.UTF8.GetString(seg)}");
                 }
@@ -255,7 +255,7 @@ namespace GbbEngine.Server
                 if (Request != null && Plant.PlantState!.MqttClient!=null)
                 {
                     Operation = Request.Operation;
-                    if (!Configuration.Parameters.IsVerboseLog)
+                    if (!Parameters.IsVerboseLog)
                     {
                         log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Received request: {Operation} {Request.FromDate} {Request.ToDate}");
                     }
@@ -300,7 +300,7 @@ namespace GbbEngine.Server
 
 
                     var msg = JsonSerializer.Serialize(Response, SerOpt);
-                    if (Configuration.Parameters.IsVerboseLog)
+                    if (Parameters.IsVerboseLog)
                     {
                         log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Sending response: {msg}");
                     }
