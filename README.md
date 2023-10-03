@@ -25,3 +25,7 @@ If first connection to mqtt failed then program tries to connect every 5 minutes
 
 Program every minute sends keepalive messave to mqtt. If connected has been lost then every minute program tries to reconect.
 
+## Setup in [GbbVictronWeb](https://gbbvictronweb.gbbsoft.pl/)
+
+Manual how setup GbbConnect with Deya and GbbVictronWeb: [Manual](https://gbbvictronweb.gbbsoft.pl/Manual?Filters.Id=8)
+
