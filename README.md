@@ -1,6 +1,6 @@
 # GbbConnect
 
-Program to connect inverters (eg: Deya) and program GbbVictronWeb.gbbsoft.pl.
+Program to connect inverters (eg: Deya) and program [GbbVictronWeb.gbbsoft.pl.](https://gbbvictronweb.gbbsoft.pl/)
 
 To connect with inverters program uses SolarmanV5 protocol. (Loggers serial numers: 17xxxxxxx, 21xxxxxxx or 40xxxxxxx)
 
