@@ -88,6 +88,7 @@
             StopServer_button = new Button();
             timer1 = new System.Windows.Forms.Timer(components);
             Version_label = new Label();
+            textBox7 = new TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -578,6 +579,7 @@
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(textBox7);
             tabPage4.Controls.Add(About_label2);
             tabPage4.Controls.Add(linkLabel1);
             tabPage4.Controls.Add(label8);
@@ -591,9 +593,9 @@
             // About_label2
             // 
             About_label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            About_label2.Location = new Point(6, 96);
+            About_label2.Location = new Point(3, 20);
             About_label2.Name = "About_label2";
-            About_label2.Size = new Size(849, 20);
+            About_label2.Size = new Size(947, 20);
             About_label2.TabIndex = 2;
             About_label2.Text = "Author: Gbb Software";
             About_label2.TextAlign = ContentAlignment.MiddleCenter;
@@ -601,9 +603,9 @@
             // linkLabel1
             // 
             linkLabel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            linkLabel1.Location = new Point(6, 145);
+            linkLabel1.Location = new Point(3, 40);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(849, 23);
+            linkLabel1.Size = new Size(947, 23);
             linkLabel1.TabIndex = 1;
             linkLabel1.TabStop = true;
             linkLabel1.Text = "https://github.com/gbbsoft/GbbConnect";
@@ -612,9 +614,9 @@
             // label8
             // 
             label8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label8.Location = new Point(6, 76);
+            label8.Location = new Point(3, 0);
             label8.Name = "label8";
-            label8.Size = new Size(849, 20);
+            label8.Size = new Size(947, 20);
             label8.TabIndex = 0;
             label8.Text = "GbbConnect";
             label8.TextAlign = ContentAlignment.MiddleCenter;
@@ -665,6 +667,18 @@
             Version_label.TabIndex = 4;
             Version_label.Text = "Version:";
             // 
+            // textBox7
+            // 
+            textBox7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBox7.Location = new Point(3, 66);
+            textBox7.Multiline = true;
+            textBox7.Name = "textBox7";
+            textBox7.ReadOnly = true;
+            textBox7.ScrollBars = ScrollBars.Both;
+            textBox7.Size = new Size(947, 427);
+            textBox7.TabIndex = 3;
+            textBox7.Text = "Version 1.0\r\n- Suport for Deya SUN-xK-SG0xLP3";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -702,6 +716,7 @@
             ((System.ComponentModel.ISupportInitialize)RegisterCount_numericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)RegisterNo_numericUpDown).EndInit();
             tabPage4.ResumeLayout(false);
+            tabPage4.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -763,5 +778,6 @@
         private CheckBox DriverLog_checkBox;
         private Label Version_label;
         private CheckBox checkBox2;
+        private TextBox textBox7;
     }
 }
