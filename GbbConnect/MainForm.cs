@@ -10,6 +10,8 @@ namespace GbbConnect
 {
     public partial class MainForm : Form, GbbLib.IOurLog
     {
+        public string VERSION = "0.1 BETA";
+
         public MainForm()
         {
             InitializeComponent();
@@ -42,6 +44,8 @@ namespace GbbConnect
                     this.About_label2.Text = this.About_label2.Text + " 2023";
                 else
                     this.About_label2.Text = this.About_label2.Text + " 2023 - {DateTime.Today.Year}";
+
+                this.Version_label.Text = $"Version: {VERSION}";
             }
             catch (Exception ex)
             {
@@ -442,7 +446,7 @@ namespace GbbConnect
         {
             try
             {
-                // Prevent Idle-to-Sleep (monitor not affected) (see note above)
+                // Prevent Idle-to-Sleep (monitor not affected)
                 SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
             }
             catch (Exception ex)

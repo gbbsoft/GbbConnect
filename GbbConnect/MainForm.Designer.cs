@@ -85,6 +85,7 @@
             StartServer_button = new Button();
             StopServer_button = new Button();
             timer1 = new System.Windows.Forms.Timer(components);
+            Version_label = new Label();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -372,7 +373,7 @@
             // 
             checkBox1.AutoSize = true;
             checkBox1.DataBindings.Add(new Binding("Checked", ParametersBindingSource, "Server_AutoStart", true));
-            checkBox1.Location = new Point(64, 26);
+            checkBox1.Location = new Point(6, 22);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(191, 19);
             checkBox1.TabIndex = 3;
@@ -454,14 +455,14 @@
             DriverLog_checkBox.Location = new Point(656, 34);
             DriverLog_checkBox.Name = "DriverLog_checkBox";
             DriverLog_checkBox.Size = new Size(107, 19);
-            DriverLog_checkBox.TabIndex = 10;
+            DriverLog_checkBox.TabIndex = 7;
             DriverLog_checkBox.Text = "Driver level Log";
             DriverLog_checkBox.UseVisualStyleBackColor = true;
             // 
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(237, 39);
+            label12.Location = new Point(390, 39);
             label12.Name = "label12";
             label12.Size = new Size(63, 15);
             label12.TabIndex = 9;
@@ -469,12 +470,12 @@
             // 
             // RegisterCount_numericUpDown
             // 
-            RegisterCount_numericUpDown.Location = new Point(306, 35);
+            RegisterCount_numericUpDown.Location = new Point(459, 35);
             RegisterCount_numericUpDown.Maximum = new decimal(new int[] { 120, 0, 0, 0 });
             RegisterCount_numericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             RegisterCount_numericUpDown.Name = "RegisterCount_numericUpDown";
             RegisterCount_numericUpDown.Size = new Size(76, 23);
-            RegisterCount_numericUpDown.TabIndex = 8;
+            RegisterCount_numericUpDown.TabIndex = 4;
             RegisterCount_numericUpDown.TextAlign = HorizontalAlignment.Center;
             RegisterCount_numericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -503,7 +504,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(99, 39);
+            label11.Location = new Point(252, 39);
             label11.Name = "label11";
             label11.Size = new Size(52, 15);
             label11.TabIndex = 5;
@@ -511,51 +512,51 @@
             // 
             // RegisterNo_numericUpDown
             // 
-            RegisterNo_numericUpDown.Location = new Point(155, 35);
+            RegisterNo_numericUpDown.Location = new Point(308, 35);
             RegisterNo_numericUpDown.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             RegisterNo_numericUpDown.Name = "RegisterNo_numericUpDown";
             RegisterNo_numericUpDown.Size = new Size(76, 23);
-            RegisterNo_numericUpDown.TabIndex = 4;
+            RegisterNo_numericUpDown.TabIndex = 3;
             RegisterNo_numericUpDown.TextAlign = HorizontalAlignment.Center;
             RegisterNo_numericUpDown.Value = new decimal(new int[] { 184, 0, 0, 0 });
             // 
             // Search_button
             // 
-            Search_button.Location = new Point(401, 6);
+            Search_button.Location = new Point(6, 6);
             Search_button.Name = "Search_button";
             Search_button.Size = new Size(240, 23);
-            Search_button.TabIndex = 3;
+            Search_button.TabIndex = 2;
             Search_button.Text = "Search for Inverters (SolarmanV5)";
             Search_button.UseVisualStyleBackColor = true;
             Search_button.Click += Search_button_Click;
             // 
             // TestSolarmanV5_button
             // 
-            TestSolarmanV5_button.Location = new Point(155, 6);
+            TestSolarmanV5_button.Location = new Point(252, 6);
             TestSolarmanV5_button.Name = "TestSolarmanV5_button";
-            TestSolarmanV5_button.Size = new Size(143, 23);
+            TestSolarmanV5_button.Size = new Size(199, 23);
             TestSolarmanV5_button.TabIndex = 2;
-            TestSolarmanV5_button.Text = "Read from SolarmanV5";
+            TestSolarmanV5_button.Text = "Read register(s) from SolarmanV5";
             TestSolarmanV5_button.UseVisualStyleBackColor = true;
             TestSolarmanV5_button.Click += TestSolarmanV5_button_Click;
             // 
             // Log_textBox
             // 
             Log_textBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            Log_textBox.Location = new Point(6, 65);
+            Log_textBox.Location = new Point(6, 64);
             Log_textBox.Multiline = true;
             Log_textBox.Name = "Log_textBox";
             Log_textBox.ReadOnly = true;
             Log_textBox.ScrollBars = ScrollBars.Both;
-            Log_textBox.Size = new Size(846, 396);
+            Log_textBox.Size = new Size(846, 397);
             Log_textBox.TabIndex = 1;
             // 
             // TestConnections_button
             // 
-            TestConnections_button.Location = new Point(6, 6);
+            TestConnections_button.Location = new Point(459, 6);
             TestConnections_button.Name = "TestConnections_button";
             TestConnections_button.Size = new Size(143, 23);
-            TestConnections_button.TabIndex = 0;
+            TestConnections_button.TabIndex = 5;
             TestConnections_button.Text = "Read from ModBusTCP";
             TestConnections_button.UseVisualStyleBackColor = true;
             TestConnections_button.Click += TestConnections_button_Click;
@@ -640,11 +641,21 @@
             timer1.Interval = 60000;
             timer1.Tick += timer1_Tick;
             // 
+            // Version_label
+            // 
+            Version_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Version_label.Location = new Point(771, 16);
+            Version_label.Name = "Version_label";
+            Version_label.Size = new Size(104, 19);
+            Version_label.TabIndex = 4;
+            Version_label.Text = "Version:";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(890, 577);
+            Controls.Add(Version_label);
             Controls.Add(StopServer_button);
             Controls.Add(StartServer_button);
             Controls.Add(Save_button);
@@ -734,5 +745,6 @@
         private Label label12;
         private NumericUpDown RegisterCount_numericUpDown;
         private CheckBox DriverLog_checkBox;
+        private Label Version_label;
     }
 }
