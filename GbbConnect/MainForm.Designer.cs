@@ -31,6 +31,7 @@
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             groupBox2 = new GroupBox();
@@ -66,6 +67,7 @@
             textBox9 = new TextBox();
             label10 = new Label();
             Log_tabPage2 = new TabPage();
+            checkBox2 = new CheckBox();
             DriverLog_checkBox = new CheckBox();
             label12 = new Label();
             RegisterCount_numericUpDown = new NumericUpDown();
@@ -113,7 +115,7 @@
             tabControl1.Location = new Point(12, 41);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(866, 524);
+            tabControl1.Size = new Size(961, 524);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -126,7 +128,7 @@
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(858, 496);
+            tabPage1.Size = new Size(953, 496);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Plants";
             tabPage1.UseVisualStyleBackColor = true;
@@ -229,7 +231,7 @@
             groupBox1.Size = new Size(385, 150);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Inverter:";
+            groupBox1.Text = "Inverter Logger:";
             // 
             // textBox3
             // 
@@ -354,7 +356,7 @@
             tabPage3.Controls.Add(groupBox3);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(858, 496);
+            tabPage3.Size = new Size(953, 496);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Parameters";
             tabPage3.UseVisualStyleBackColor = true;
@@ -429,6 +431,7 @@
             // 
             // Log_tabPage2
             // 
+            Log_tabPage2.Controls.Add(checkBox2);
             Log_tabPage2.Controls.Add(DriverLog_checkBox);
             Log_tabPage2.Controls.Add(label12);
             Log_tabPage2.Controls.Add(RegisterCount_numericUpDown);
@@ -443,10 +446,21 @@
             Log_tabPage2.Location = new Point(4, 24);
             Log_tabPage2.Name = "Log_tabPage2";
             Log_tabPage2.Padding = new Padding(3);
-            Log_tabPage2.Size = new Size(858, 496);
+            Log_tabPage2.Size = new Size(953, 496);
             Log_tabPage2.TabIndex = 1;
             Log_tabPage2.Text = "Tests and Log";
             Log_tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox2
+            // 
+            checkBox2.AutoSize = true;
+            checkBox2.DataBindings.Add(new Binding("Checked", ParametersBindingSource, "IsDriverLog2", true, DataSourceUpdateMode.OnPropertyChanged));
+            checkBox2.Location = new Point(784, 35);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(113, 19);
+            checkBox2.TabIndex = 10;
+            checkBox2.Text = "Driver level2 Log";
+            checkBox2.UseVisualStyleBackColor = true;
             // 
             // DriverLog_checkBox
             // 
@@ -454,9 +468,9 @@
             DriverLog_checkBox.DataBindings.Add(new Binding("Checked", ParametersBindingSource, "IsDriverLog", true, DataSourceUpdateMode.OnPropertyChanged));
             DriverLog_checkBox.Location = new Point(656, 34);
             DriverLog_checkBox.Name = "DriverLog_checkBox";
-            DriverLog_checkBox.Size = new Size(107, 19);
+            DriverLog_checkBox.Size = new Size(113, 19);
             DriverLog_checkBox.TabIndex = 7;
-            DriverLog_checkBox.Text = "Driver level Log";
+            DriverLog_checkBox.Text = "Driver level1 Log";
             DriverLog_checkBox.UseVisualStyleBackColor = true;
             // 
             // label12
@@ -544,11 +558,12 @@
             // 
             Log_textBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             Log_textBox.Location = new Point(6, 64);
+            Log_textBox.MaxLength = 65000;
             Log_textBox.Multiline = true;
             Log_textBox.Name = "Log_textBox";
             Log_textBox.ReadOnly = true;
             Log_textBox.ScrollBars = ScrollBars.Both;
-            Log_textBox.Size = new Size(846, 397);
+            Log_textBox.Size = new Size(941, 397);
             Log_textBox.TabIndex = 1;
             // 
             // TestConnections_button
@@ -568,7 +583,7 @@
             tabPage4.Controls.Add(label8);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(858, 496);
+            tabPage4.Size = new Size(953, 496);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "About";
             tabPage4.UseVisualStyleBackColor = true;
@@ -644,7 +659,7 @@
             // Version_label
             // 
             Version_label.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Version_label.Location = new Point(771, 16);
+            Version_label.Location = new Point(866, 16);
             Version_label.Name = "Version_label";
             Version_label.Size = new Size(104, 19);
             Version_label.TabIndex = 4;
@@ -654,12 +669,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(890, 577);
+            ClientSize = new Size(985, 577);
             Controls.Add(Version_label);
             Controls.Add(StopServer_button);
             Controls.Add(StartServer_button);
             Controls.Add(Save_button);
             Controls.Add(tabControl1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             Text = "GbbConnect";
             FormClosing += MainForm_FormClosing;
@@ -746,5 +762,6 @@
         private NumericUpDown RegisterCount_numericUpDown;
         private CheckBox DriverLog_checkBox;
         private Label Version_label;
+        private CheckBox checkBox2;
     }
 }

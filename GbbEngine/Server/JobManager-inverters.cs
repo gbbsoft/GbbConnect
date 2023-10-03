@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using GbbEngine.Configuration;
 using GbbEngine.Drivers;
 using GbbEngine.Drivers.Random;
@@ -125,12 +126,17 @@ namespace GbbEngine.Server
                                 throw new ApplicationException("Uknown driver type: " + Info.Driver);
                         }
 
+                        try
+                        {
+                            await GetDataFromInverter(Parameters, Plant, Info, Driver, ct, log, nw);
+                            SaveStatisticFile(Plant, log, nw);
+                            await ProcessSchedulers(Parameters, Plant, Info, Driver, log, nw);
+                        }
+                        finally
+                        {
+                            Driver.Dispose();
+                        }
 
-                        await GetDataFromInverter(Parameters, Plant, Info, Driver, ct, log, nw);
-                        SaveStatisticFile(Plant, log, nw);
-#if DEBUG
-                        await ProcessSchedulers(Plant, Info, Driver, log, nw);
-#endif
                     }
                     catch (TaskCanceledException)
                     {
@@ -241,7 +247,6 @@ namespace GbbEngine.Server
             finally
             {
                 Plant.PlantState.OurSaveState();
-                Driver.Dispose();
             }
             
             
@@ -470,12 +475,11 @@ namespace GbbEngine.Server
         // ======================================
 
 
-        private async Task ProcessSchedulers(Plant Plant, InverterInfo Info, Drivers.IDriver Driver, IOurLog log, DateTime nw)
+        private async Task ProcessSchedulers(Parameters Parameters, Plant Plant, InverterInfo Info, Drivers.IDriver Driver, IOurLog log, DateTime nw)
         {
             if (Plant.PlantState!.SchedulersReadyToProcess)
             {
                 var Schedulers = Plant.PlantState!.Schedulers!;
-                Plant.PlantState!.SchedulersReadyToProcess = false;
 
                 Dictionary<int, int> Values = new();
 
@@ -486,111 +490,160 @@ namespace GbbEngine.Server
                     // Convert Scheduler to Deya TimeOfUse
                     // =============================
                     var TimeOfUse = ConvertSchedulers(Schedulers);
-
-                    // =============================
-                    // Send TimeOfUse to Inverter
-                    // =============================
-
-                    // jeżeli wpisów jest za dużo, to usuwamy wpisy z przeszłości
-                    int CurrHour = nw.Hour * 100;
-                    while (TimeOfUse.Count > 6)
+                    if (TimeOfUse.Count > 0)
                     {
-                        if (TimeOfUse[1].FromTime < CurrHour)
-                            TimeOfUse.RemoveAt(0);
-                    }
 
-                    byte[] Tab = new byte[2];
-                    int Pos = 0;
-                    int SrcPos = 0;
-                    Deya_TimeOfUse? Curr = null;
-                    while (Pos < 6)
-                    {
-                        var itm = TimeOfUse[SrcPos];
+                        if (Parameters.IsVerboseLog)
+                        {
+                            foreach(var itm in TimeOfUse)
+                            {
+                                log.OurLog(LogLevel.Information, $"{Plant.Name}: TimeOfUser: FromHour={itm.FromTime}, SellingFirst={itm.IsSellingFirst}, GridCharge={itm.IsGridCharging}, SOC={itm.SOC}, Power={itm.Power}, ZeroChargeA={itm.IsZeroChargeA}");
+                            }
+                        }
 
-                        if (itm.FromTime < CurrHour)
-                            Curr = itm;
+
+                        // =============================
+                        // Send TimeOfUse to Inverter
+                        // =============================
+
+                        // jeżeli wpisów jest za dużo, to usuwamy początkowe wpisy z przeszłości
+                        int CurrHour = nw.Hour * 100 + nw.Minute;
+                        while (TimeOfUse.Count > 6)
+                        {
+                            if (TimeOfUse[1].FromTime < CurrHour)
+                                TimeOfUse.RemoveAt(0);
+                        }
+
+                        byte[] TabTime = new byte[2*6];
+                        byte[] TabPower = new byte[2*6];
+                        bool IsTabPower = false;
+                        byte[] TabSOC = new byte[2*6];
+                        byte[] TabGridCharge = new byte[2*6];
+                        int Pos = 0;
+                        int SrcPos = 0;
+                        Deya_TimeOfUse? Curr = null;
+                        Deya_TimeOfUse? Last = null;
+                        int? LastFromTime = null;
+                        while (Pos < 6)
+                        {
+                            var itm = TimeOfUse[SrcPos];
+
+                            if (itm.FromTime <= CurrHour)
+                                Curr = itm;
+                            if (LastFromTime == null || itm.FromTime > LastFromTime)
+                            {
+                                Last = itm;
+                                LastFromTime = itm.FromTime;
+                            }
+
+                            // Time
+                            Put2Byte(TabTime, Pos * 2, itm.FromTime);
+
+                            // Power
+                            if (itm.Power != null)
+                            {
+                                // await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + Offset), Put2Byte(Tab, 0, itm.Power.Value));
+                                Put2Byte(TabPower, Pos * 2, itm.Power.Value);
+                                IsTabPower = true;
+                            }
+                            else
+                                Put2Byte(TabPower, Pos * 2, 0);
+
+                            // SOC
+                            Put2Byte(TabSOC, Pos * 2, itm.SOC);
+
+                            // GridCharge
+                            Put2Byte(TabGridCharge, Pos * 2, itm.IsGridCharging ? 1 : 0);
+
+
+                            // jak jest za mało TimeOfUser, to powtarzamy ostatni do końca
+                            if (SrcPos + 1 < TimeOfUse.Count)
+                                SrcPos++;
+                            Pos++;
+                        }
 
 #if !DEBUG
-                        int Offset = 2 * 6; // bytes
+                        int Offset = 6; // registers
 
                         // Time
-                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos), Put2Byte(Tab, Pos, itm.FromTime));
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo), TabTime);
 
                         // Power
-                        if (itm.Power != null)
+                        if (IsTabPower)
                         {
-                            await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + Offset), Put2Byte(Tab, Pos, itm.Power.Value));
+                            await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Offset), TabPower);
                         }
 
                         // SOC
-                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + 3 * Offset), Put2Byte(Tab, Pos, itm.SOC));
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + 3 * Offset), TabSOC);
 
                         // Grid Charge
-                        int Value = itm.IsGridCharging? 1 : 0;
-                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + 4 * Offset), Put2Byte(Tab, Pos, Value));
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + 4 * Offset), TabGridCharge);
 
 #endif
-                        // jak jest za mało TimeOfUser, to powtarzamy ostatni do końca
-                        if (SrcPos+1 < TimeOfUse.Count)
-                            SrcPos++;
-                        Pos++;
-                    }
 
-                    if (Curr != null)
-                    {
-                        // IsSellingFirst
-                        if (Info.Deya_WorkMode_RegNo!=null)
+                        if (Curr == null)
+                            // jak nie ma wcześniejszych, to bierzemy ostatniego schedulera
+                            Curr = Last;
+                        if (Curr != null)
                         {
-                            if (Curr.IsSellingFirst)
-                            {
-                                // read prev Mode
-                                if (Plant.PlantState.PrevDeyaMode == null)
-                                {
-                                    Plant.PlantState.PrevDeyaMode = await Get2Byte(Info.Deya_WorkMode_RegNo.Value, Values, Driver);
-                                }
-                                // change to 0
-                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_WorkMode_RegNo), Put2Byte(Tab, Pos, (int)InverterInfo.Deya_Modes.i00_SellingFirst));
-                            }
-                            else if (Plant.PlantState.PrevDeyaMode != null)
-                            {
-                                // revent to prev
-                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_WorkMode_RegNo), Put2Byte(Tab, Pos, Plant.PlantState.PrevDeyaMode.Value));
-                                Plant.PlantState.PrevDeyaMode= null;
-                            }
-                        }
+                            byte[] Tab = new byte[2];
 
-                        // ZeroChargeA
-                        if (Info.MaxACharge != null)
-                        {
-                            if (Curr.IsZeroChargeA)
+                            // IsSellingFirst
+                            if (Info.Deya_WorkMode_RegNo != null)
                             {
-                                // read prev ChargeA
-                                if (Plant.PlantState.PrevGridChargeA == null)
+                                if (Curr.IsSellingFirst)
                                 {
-                                    Plant.PlantState.PrevGridChargeA = await Get2Byte(Info.MaxACharge.Value, Values, Driver);
+                                    // read prev Mode
+                                    if (Plant.PlantState.PrevDeyaMode == null)
+                                    {
+                                        Plant.PlantState.PrevDeyaMode = await Get2Byte(Info.Deya_WorkMode_RegNo.Value, Values, Driver);
+                                    }
+                                    // change to 0
+                                    await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_WorkMode_RegNo), Put2Byte(Tab, 0, (int)InverterInfo.Deya_Modes.i00_SellingFirst));
                                 }
-                                // change to 0
-                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.MaxACharge), Put2Byte(Tab, Pos, 0));
+                                else if (Plant.PlantState.PrevDeyaMode != null)
+                                {
+                                    // revent to prev
+                                    await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_WorkMode_RegNo), Put2Byte(Tab, 0, Plant.PlantState.PrevDeyaMode.Value));
+                                    Plant.PlantState.PrevDeyaMode = null;
+                                }
                             }
-                            else if (Plant.PlantState.PrevGridChargeA != null)
+
+                            // ZeroChargeA
+                            if (Info.MaxACharge != null)
                             {
-                                // revent to prev
-                                await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.MaxACharge), Put2Byte(Tab, Pos, Plant.PlantState.PrevGridChargeA.Value));
-                                Plant.PlantState.PrevGridChargeA = null;
+                                if (Curr.IsZeroChargeA)
+                                {
+                                    // read prev ChargeA
+                                    if (Plant.PlantState.PrevGridChargeA == null)
+                                    {
+                                        Plant.PlantState.PrevGridChargeA = await Get2Byte(Info.MaxACharge.Value, Values, Driver);
+                                    }
+                                    // change to 0
+                                    await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.MaxACharge), Put2Byte(Tab,0, 0));
+                                }
+                                else if (Plant.PlantState.PrevGridChargeA != null)
+                                {
+                                    // revent to prev
+                                    await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.MaxACharge), Put2Byte(Tab, 0, Plant.PlantState.PrevGridChargeA.Value));
+                                    Plant.PlantState.PrevGridChargeA = null;
+                                }
                             }
+                            Plant.PlantState.OurSaveState();
                         }
-                        Plant.PlantState.OurSaveState();
                     }
-
+                    
                 }
+                Plant.PlantState!.SchedulersReadyToProcess = false;
             }
 
         }
 
-        private byte[] Put2Byte(byte[] Tab, int Pos, int Value)
+        private byte[] Put2Byte(byte[] Tab, int PosBytes, int Value)
         {
-            Tab[0] = (byte)((Value >> 8) & 0xff);
-            Tab[1] = (byte)(Value & 0xff);
+            Tab[PosBytes] = (byte)((Value >> 8) & 0xff);
+            Tab[PosBytes+1] = (byte)(Value & 0xff);
             return Tab;
         }
 

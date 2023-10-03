@@ -10,7 +10,7 @@ namespace GbbConnect
 {
     public partial class MainForm : Form, GbbLib.IOurLog
     {
-        public string VERSION = "0.1 BETA";
+        public string VERSION = "1.0";
 
         public MainForm()
         {
@@ -366,8 +366,8 @@ namespace GbbConnect
             if (this.InvokeRequired)
                 this.Invoke(new Action(() =>
                 {
-                    if (Log_textBox.Text.Length > 10000)
-                        Log_textBox.Text = Log_textBox.Text.Substring(5000) + msg;
+                    if (Log_textBox.Text.Length > 50000)
+                        Log_textBox.Text = Log_textBox.Text.Substring(45000) + msg;
                     else
                         Log_textBox.AppendText(msg);
                 }));

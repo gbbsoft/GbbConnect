@@ -33,6 +33,9 @@ namespace GbbEngine.Configuration
         [ObservableProperty]
         private bool m_IsDriverLog;
 
+        [ObservableProperty]
+        private bool m_IsDriverLog2;
+
 
 
         // ======================================
@@ -53,6 +56,7 @@ namespace GbbEngine.Configuration
             xml.WriteAttributeString("Server_AutoStart", Server_AutoStart ? "1" : "0");
             xml.WriteAttributeString("IsVerboseLog", IsVerboseLog ? "1" : "0");
             xml.WriteAttributeString("IsDriverLog", IsDriverLog ? "1" : "0");
+            xml.WriteAttributeString("IsDriverLog2", IsDriverLog2 ? "1" : "0");
 
 
             //if (CurrPlant!= null)
@@ -94,6 +98,10 @@ namespace GbbEngine.Configuration
                 s = xml.GetAttribute("IsDriverLog");
                 if (s != null)
                     ret.IsDriverLog= s=="1";
+
+                s = xml.GetAttribute("IsDriverLog2");
+                if (s != null)
+                    ret.IsDriverLog2= s=="1";
 
 
                 //// for later

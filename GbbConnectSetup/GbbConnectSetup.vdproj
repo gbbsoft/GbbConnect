@@ -13,6 +13,12 @@
 "SccProvider" = "8:"
     "Hierarchy"
     {
+        "Entry"
+        {
+        "MsmKey" = "8:_F3ABE140B5A34CD880449CB6B3BFAD17"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -38,6 +44,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -62,6 +76,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -94,6 +116,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3ABE140B5A34CD880449CB6B3BFAD17"
+            {
+            "SourcePath" = "8:..\\GbbConnect\\App.ico"
+            "TargetName" = "8:App.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_D04CE676DC984D56908116724C257F85"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -151,7 +193,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GbbConnect"
         "ProductCode" = "8:{23ED49A5-A7A0-4875-8591-1072DF0FF7BF}"
-        "PackageCode" = "8:{49D84B91-F288-4D60-A62D-C86FC7797163}"
+        "PackageCode" = "8:{651205D8-BCC3-4265-9B07-7A1F6FFC336D}"
         "UpgradeCode" = "8:{2C9BC4D5-845B-4E7F-82E1-CEB8074C8BF4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -282,7 +324,7 @@
             "Target" = "8:_8AF430CEB20541418D2E197D26328C1C"
             "Folder" = "8:_3BB819D698CD4A77ACC3FF88ECA8A7C0"
             "WorkingFolder" = "8:_D04CE676DC984D56908116724C257F85"
-            "Icon" = "8:"
+            "Icon" = "8:_F3ABE140B5A34CD880449CB6B3BFAD17"
             "Feature" = "8:"
             }
         }

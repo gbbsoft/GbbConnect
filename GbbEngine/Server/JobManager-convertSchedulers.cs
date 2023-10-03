@@ -90,7 +90,7 @@ namespace GbbEngine.Server
                         Next.IsZeroChargeA = false;
                         break;
 
-                    case "DisableDischarge":
+                    case "DisableCharge":
                         Next.IsGridCharging = false;
                         Next.IsSellingFirst = true;
                         Next.SOC = 5;

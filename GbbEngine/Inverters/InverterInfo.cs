@@ -103,14 +103,14 @@ namespace GbbEngine.Inverters
                         Load_RegNo_TotalHi = 528,
                         Load_Multipler = 0.1m,
 
-                        //FastRead1_RegStart = 522,
-                        //FastRead1_RegCount = 535-522+1,
+                        FastRead1_RegStart = 522,
+                        FastRead1_RegCount = 535-522+1, // = 14
 
                         MaxACharge = 108,
                         Deya_TimeOfUser_RegNo = 148,
                         Deya_WorkMode_RegNo = 142,
                     },
-                    new InverterInfo(1, "Deya SUN-xK-SG0xLP1 - 1 fazowy", Drivers.i000_SolarmanV5)
+                    new InverterInfo(1, "Deya SUN-xK-SG0xLP1 - 1 fazowy (Beta)", Drivers.i000_SolarmanV5)
                     {
                         RegisterNo_SOC = 184,
 
@@ -130,8 +130,8 @@ namespace GbbEngine.Inverters
                         Load_RegNo_TotalHi = 86,
                         Load_Multipler = 0.1m,
 
-                        //FastRead1_RegStart = 78,
-                        //FastRead1_RegCount = 86-78+1,
+                        FastRead1_RegStart = 78,
+                        FastRead1_RegCount = 86-78+1, // ==7
 
                         MaxACharge = 210,
                         Deya_TimeOfUser_RegNo = 250,

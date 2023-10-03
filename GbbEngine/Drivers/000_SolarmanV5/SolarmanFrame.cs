@@ -83,10 +83,18 @@ namespace GbbEngine.Drivers.SolarmanV5
             return frame;
         }
 
+        public bool CheckSeqenceNumber(byte[] Frame)
+        {
+            return Frame.Length > 5
+                && Frame[5] == SequenceNumber;
+        }
+
 
         public byte[] GetModBusFrame(byte[] Frame)
         {
             int FrameLen = Frame.Length;
+            if (FrameLen<5)
+                throw new ApplicationException($"SolarmanV5: Frame too short: {FrameLen}");
 
             int PayloadLength = (int)ToUInt16(Frame, 1);
 
