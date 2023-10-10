@@ -1,6 +1,6 @@
 # GbbConnect
 
-Program to connect inverters (eg: Deya) and program [GbbVictronWeb.gbbsoft.pl.](https://gbbvictronweb.gbbsoft.pl/)
+Program to connect inverters (eg: Deye) and program [GbbVictronWeb.gbbsoft.pl.](https://gbbvictronweb.gbbsoft.pl/)
 
 To connect with inverters program uses SolarmanV5 protocol. (Loggers serial numers: 17xxxxxxx, 21xxxxxxx or 40xxxxxxx) (maybe also: 27xxxxxxx, 23xxxxxxx)
 
@@ -27,7 +27,7 @@ Program every minute sends keepalive messave to mqtt. If connected has been lost
 
 ## Setup in [GbbVictronWeb](https://gbbvictronweb.gbbsoft.pl/)
 
-Manual how setup GbbConnect with Deya and GbbVictronWeb: [Manual](https://gbbvictronweb.gbbsoft.pl/Manual?Filters.Id=8)
+Manual how setup GbbConnect with Deye and GbbVictronWeb: [Manual](https://gbbvictronweb.gbbsoft.pl/Manual?Filters.Id=8)
 
 ## History
 
