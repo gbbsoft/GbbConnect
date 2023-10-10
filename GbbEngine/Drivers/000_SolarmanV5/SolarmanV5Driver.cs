@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading;
+using GbbLibSmall;
 
 namespace GbbEngine.Drivers.SolarmanV5
 {
@@ -14,7 +15,7 @@ namespace GbbEngine.Drivers.SolarmanV5
         public int Timeout { get; set; } = 5000; // 5 sec
 
         Configuration.Parameters Parameters;
-        GbbLib.IOurLog? OurLog;
+        GbbLibSmall.IOurLog? OurLog;
 
         private string IpAddress;
         private int PortNumber;
@@ -22,7 +23,7 @@ namespace GbbEngine.Drivers.SolarmanV5
 
         private Socket? Socket;
 
-        public SolarmanV5Driver( Configuration.Parameters _Parameters, string _IPAddress, int _PortNumber, long _SerialNumber, GbbLib.IOurLog? ourLog)
+        public SolarmanV5Driver( Configuration.Parameters _Parameters, string _IPAddress, int _PortNumber, long _SerialNumber, GbbLibSmall.IOurLog? ourLog)
         {
             Parameters = _Parameters;
             IpAddress = _IPAddress;
@@ -155,7 +156,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                     {
                         if (Parameters.IsDriverLog && OurLog != null)
                         {
-                            OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Delay: {ms}ms");
+                            OurLog.OurLog(LogLevel.Information, $"Delay: {ms}ms");
                         }
                         await Task.Delay(ms);
                     }
@@ -165,9 +166,9 @@ namespace GbbEngine.Drivers.SolarmanV5
                 if (Parameters.IsDriverLog && OurLog != null)
                 {
                     if (LogSufix != null)
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Send ModBus: {LogSufix}: {BitConverter.ToString(write_data)} ");
+                        OurLog.OurLog(LogLevel.Information, $"Send ModBus: {LogSufix}: {BitConverter.ToString(write_data)} ");
                     else
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Send ModBus: {BitConverter.ToString(write_data)}");
+                        OurLog.OurLog(LogLevel.Information, $"Send ModBus: {BitConverter.ToString(write_data)}");
                 }
                 var Frame = new SolarmanFrame(GetNextSequenceNumber(), SerialNumber);
                 var OutBuf = Frame.CreateFrame(write_data);
@@ -175,7 +176,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                 // Send
                 if (Parameters.IsDriverLog2 && OurLog != null)
                 {
-                    OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Send SolarmanV5: {BitConverter.ToString(OutBuf)}");
+                    OurLog.OurLog(LogLevel.Information, $"Send SolarmanV5: {BitConverter.ToString(OutBuf)}");
                 }
                 int bytesSent = Socket.Send(OutBuf);
 
@@ -192,7 +193,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                     Buffer.BlockCopy(buffer, 0, InBuf, 0, bytesReceived);
                     if (Parameters.IsDriverLog2 && OurLog != null)
                     {
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received SolarmanV5: {BitConverter.ToString(InBuf)}");
+                        OurLog.OurLog(LogLevel.Information, $"Received SolarmanV5: {BitConverter.ToString(InBuf)}");
                     }
                     // check Sequence Number
                     if (Frame.CheckSeqenceNumber(InBuf))
@@ -209,7 +210,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                  || crc[1] != Buf[Buf.Length - 1])
                 {
                     if (Parameters.IsDriverLog && OurLog != null)
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
+                        OurLog.OurLog(LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
                     throw new ApplicationException("SolarmanV5: Wrong CRC!");
                 }
 
@@ -223,7 +224,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                 if (function > 128)
                 {
                     if (Parameters.IsDriverLog && OurLog != null)
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
+                        OurLog.OurLog(LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
 
                     function -= 128;
                     throw new ApplicationException($"Error response: function: {function}, error={Buf[2]}");
@@ -233,7 +234,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                 else if ((function >= 5) && (function != 23))
                 {
                     if (Parameters.IsDriverLog && OurLog != null)
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
+                        OurLog.OurLog(LogLevel.Information, $"Received ModBus: {BitConverter.ToString(Buf)}");
 
                     //data = new byte[2];
                     //Array.Copy(Buf, 3, data, 0, 2);
@@ -260,7 +261,7 @@ namespace GbbEngine.Drivers.SolarmanV5
                             sb.Append(ret[2 * i] * 256 + ret[2 * i + 1]);
                             sb.Append(", ");
                         }
-                        OurLog.OurLog(Microsoft.Extensions.Logging.LogLevel.Information, $"Received ModBus: {sb.ToString()}: {BitConverter.ToString(Buf)}");
+                        OurLog.OurLog(LogLevel.Information, $"Received ModBus: {sb.ToString()}: {BitConverter.ToString(Buf)}");
                     }
                 }
 

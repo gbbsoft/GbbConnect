@@ -11,7 +11,7 @@ namespace GbbEngine.Server
 
         private object StatisticFileLock = new object();
 
-        public void OurStartJobs(Configuration.Parameters Parameters, GbbLib.IOurLog log)
+        public void OurStartJobs(Configuration.Parameters Parameters, GbbLibSmall.IOurLog log)
         {
             // load plant state
             foreach (var plant in Parameters.Plants)

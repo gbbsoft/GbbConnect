@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GbbConnectConsole": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

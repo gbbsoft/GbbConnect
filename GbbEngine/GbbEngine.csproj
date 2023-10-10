@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GbbLib\GbbLib.csproj" />
     <ProjectReference Include="..\GbbConnectProtocol\GbbConnectProtocol.csproj" />
+    <ProjectReference Include="..\GbbLibSmall\GbbLibSmall.csproj" />
   </ItemGroup>
 
 </Project>

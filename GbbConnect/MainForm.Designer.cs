@@ -80,6 +80,7 @@
             Log_textBox = new TextBox();
             TestConnections_button = new Button();
             tabPage4 = new TabPage();
+            textBox7 = new TextBox();
             About_label2 = new Label();
             linkLabel1 = new LinkLabel();
             label8 = new Label();
@@ -88,7 +89,6 @@
             StopServer_button = new Button();
             timer1 = new System.Windows.Forms.Timer(components);
             Version_label = new Label();
-            textBox7 = new TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -590,6 +590,18 @@
             tabPage4.Text = "About";
             tabPage4.UseVisualStyleBackColor = true;
             // 
+            // textBox7
+            // 
+            textBox7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBox7.Location = new Point(3, 66);
+            textBox7.Multiline = true;
+            textBox7.Name = "textBox7";
+            textBox7.ReadOnly = true;
+            textBox7.ScrollBars = ScrollBars.Both;
+            textBox7.Size = new Size(947, 427);
+            textBox7.TabIndex = 3;
+            textBox7.Text = "Version 1.1\r\n- Change place for parameters.xml to MyDocuments/GbbConnect\r\nVersion 1.0\r\n- Suport for Deya SUN-xK-SG0xLP3";
+            // 
             // About_label2
             // 
             About_label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -666,18 +678,6 @@
             Version_label.Size = new Size(104, 19);
             Version_label.TabIndex = 4;
             Version_label.Text = "Version:";
-            // 
-            // textBox7
-            // 
-            textBox7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            textBox7.Location = new Point(3, 66);
-            textBox7.Multiline = true;
-            textBox7.Name = "textBox7";
-            textBox7.ReadOnly = true;
-            textBox7.ScrollBars = ScrollBars.Both;
-            textBox7.Size = new Size(947, 427);
-            textBox7.TabIndex = 3;
-            textBox7.Text = "Version 1.0\r\n- Suport for Deya SUN-xK-SG0xLP3";
             // 
             // MainForm
             // 

@@ -6,11 +6,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using GbbEngine.Configuration;
-using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Server;
 using GbbConnectProtocol;
+using GbbLibSmall;
 
 namespace GbbEngine.Server
 {
@@ -18,7 +18,7 @@ namespace GbbEngine.Server
     {
         private static MqttFactory mqttFactory = new MqttFactory();
 
-        private async void OurMqttService(Configuration.Parameters Parameters, CancellationToken ct, GbbLib.IOurLog log)
+        private async void OurMqttService(Configuration.Parameters Parameters, CancellationToken ct, IOurLog log)
         {
 
             try
@@ -67,7 +67,7 @@ namespace GbbEngine.Server
         }
 
 
-        private async Task ConnectToMqtt(Parameters Parameters, Plant plant, IMqttClient client, CancellationToken ct, GbbLib.IOurLog log)
+        private async Task ConnectToMqtt(Parameters Parameters, Plant plant, IMqttClient client, CancellationToken ct, IOurLog log)
         {
             var b = new MqttClientOptionsBuilder()
                 .WithCleanSession(true)
@@ -96,7 +96,7 @@ namespace GbbEngine.Server
 
         }
 
-        private async Task OurMqttService_DoWork(Configuration.Parameters Parameters, CancellationToken ct, GbbLib.IOurLog log)
+        private async Task OurMqttService_DoWork(Configuration.Parameters Parameters, CancellationToken ct, IOurLog log)
         {
 
             int Counter = 0;
@@ -232,7 +232,7 @@ namespace GbbEngine.Server
         // ======================================
 
 
-        private async Task MqttClient_MessageReceivedAsync(Configuration.Parameters Parameters, MqttApplicationMessageReceivedEventArgs arg, Configuration.Plant Plant, GbbLib.IOurLog log)
+        private async Task MqttClient_MessageReceivedAsync(Configuration.Parameters Parameters, MqttApplicationMessageReceivedEventArgs arg, Configuration.Plant Plant, IOurLog log)
         {
             string? Operation = null;
 
@@ -360,7 +360,7 @@ namespace GbbEngine.Server
         /// <param name="Response"></param>
         /// <param name="Plant"></param>
         /// <param name="log"></param>
-        private void GetStatistics(DateTime FromDate, DateTime ToDate, Response Response, Plant Plant, GbbLib.IOurLog log)
+        private void GetStatistics(DateTime FromDate, DateTime ToDate, Response Response, Plant Plant, IOurLog log)
         {
             CultureInfo ci = CultureInfo.InvariantCulture;
 

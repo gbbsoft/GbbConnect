@@ -132,7 +132,7 @@ namespace GbbEngine.Server
         private static string OurGetFileName(Plant plant)
         {
             // directory
-            string FileName = Path.Combine(Parameters.OurGetMainDataDir(), "PlantStates");
+            string FileName = Path.Combine(Parameters.OurGetUserBaseDirectory(), "PlantStates");
             Directory.CreateDirectory(FileName);
 
             // file name

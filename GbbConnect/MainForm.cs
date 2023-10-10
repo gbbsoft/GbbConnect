@@ -8,9 +8,9 @@ using Microsoft.VisualBasic;
 
 namespace GbbConnect
 {
-    public partial class MainForm : Form, GbbLib.IOurLog
+    public partial class MainForm : Form, GbbLibSmall.IOurLog
     {
-        public string VERSION = "1.0";
+        public string VERSION = "1.0.1";
 
         public MainForm()
         {
@@ -334,7 +334,7 @@ namespace GbbConnect
         }
 
         // log from engine
-        public void OurLog(LogLevel LogLevel, string message, params object?[] args)
+        public void OurLog(GbbLibSmall.LogLevel LogLevel, string message, params object?[] args)
         {
             var nw = DateTime.Now;
 
@@ -343,7 +343,7 @@ namespace GbbConnect
 
             // add time
             string msg;
-            if (LogLevel == LogLevel.Error)
+            if (LogLevel == GbbLibSmall.LogLevel.Error)
                 msg = $"{nw}: ERROR: {message}\r\n";
             else
                 msg = $"{nw}: {message}\r\n";

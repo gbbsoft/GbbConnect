@@ -46,6 +46,22 @@ namespace GbbConnect
         [STAThread]
         static void Main()
         {
+            // 2023-10-10: move parameters and subdirectories to new place
+            var src = GbbEngine.Configuration.Parameters.OurGetMainDataDir_Old();
+            if (Directory.Exists(Path.Combine(src, "Parameters.xml")))
+            {
+                var dest = GbbEngine.Configuration.Parameters.OurGetUserBaseDirectory();
+                foreach (var file in Directory.GetFiles(src))
+                    File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
+
+                foreach (var dir in Directory.GetDirectories(src))
+                    Directory.Move(dir, Path.Combine(dest, Path.GetFileName(dir)));
+
+                Directory.Delete(src, true);
+            }
+
+
+
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();

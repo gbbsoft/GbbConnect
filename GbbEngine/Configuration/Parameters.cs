@@ -221,20 +221,19 @@ namespace GbbEngine.Configuration
 
 
         /// <summary>
-        /// Base directory for program internal data
+        /// Old place for moving to new place
         /// </summary>
         /// <returns></returns>
-        public static string OurGetMainDataDir()
+        public static string OurGetMainDataDir_Old()
         {
             string mainDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gbb Software", "GbbConnect");
             Directory.CreateDirectory(mainDir);
             return mainDir;
-
         }
 
         public static string Parameters_GetFileName()
         {
-            return System.IO.Path.Combine(OurGetMainDataDir(), "Parameters.xml");
+            return System.IO.Path.Combine(OurGetUserBaseDirectory(), "Parameters.xml");
         }
 
     }
