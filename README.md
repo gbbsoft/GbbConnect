@@ -29,6 +29,12 @@ Program every minute sends keepalive messave to mqtt. If connected has been lost
 
 Manual how setup GbbConnect with Deya and GbbVictronWeb: [Manual](https://gbbvictronweb.gbbsoft.pl/Manual?Filters.Id=8)
 
+## History
+
+v1.0.1 - move configuration files (eg. Parameters.xml) to <MyDocuments>\GbbConnect\ directory
+
+v1.0 - start version
+
 # GbbConnectConsole
 
 Program on console.
