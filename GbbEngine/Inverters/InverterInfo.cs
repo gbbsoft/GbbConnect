@@ -83,7 +83,7 @@ namespace GbbEngine.Inverters
             {
                 Cache = new List<InverterInfo>()
                 {
-                    new InverterInfo(0, "Deya SUN-xK-SG0xLP3 - 3 fazowy", Drivers.i000_SolarmanV5)
+                    new InverterInfo(0, "Deye SUN-xK-SG0xLP3 - 3 fazowy", Drivers.i000_SolarmanV5)
                     {
                         RegisterNo_SOC = 588,
 

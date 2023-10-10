@@ -600,7 +600,7 @@
             textBox7.ScrollBars = ScrollBars.Both;
             textBox7.Size = new Size(947, 427);
             textBox7.TabIndex = 3;
-            textBox7.Text = "Version 1.1\r\n- Change place for parameters.xml to MyDocuments/GbbConnect\r\nVersion 1.0\r\n- Suport for Deya SUN-xK-SG0xLP3";
+            textBox7.Text = "Version 1.1\r\n- Change place for parameters.xml to MyDocuments/GbbConnect\r\nVersion 1.0\r\n- Suport for Deye SUN-xK-SG0xLP3";
             // 
             // About_label2
             // 

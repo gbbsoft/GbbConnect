@@ -10,7 +10,7 @@ namespace GbbConnectConsole
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="DontWaitForKey">true - don't wait for key, but just wait forever</param>
+        /// <param name="DontWaitForKey">don't wait for key, but just wait forever</param>
         static void Main(bool DontWaitForKey)
         {
 
