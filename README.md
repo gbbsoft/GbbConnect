@@ -29,3 +29,24 @@ Program every minute sends keepalive messave to mqtt. If connected has been lost
 
 Manual how setup GbbConnect with Deya and GbbVictronWeb: [Manual](https://gbbvictronweb.gbbsoft.pl/Manual?Filters.Id=8)
 
+# GbbConnectConsole
+
+Program on console.
+
+## Download
+
+Last version download: [GbbConnectConsole.zip](http://www.gbbsoft.pl/!download/GbbConnect/GbbConnectConsole.zip)
+
+## Parameters
+
+-? - list of parameters
+
+--dont-wait-for-key -  don't wait for key, but just wait forever
+
+# Docker
+
+Program GbbConnectConsole can be run in docker. File Dockerfile is present in root directory.
+
+## Configuration file
+
+You can use GbbConnect program to create (and test) configuration file (My Documents\Gbb Connect\Parameters.xml). Then file can be move as /root/GbbConnect/Parameters.xml on docker container.
