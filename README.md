@@ -56,3 +56,9 @@ Program GbbConnectConsole can be run in docker. File Dockerfile is present in ro
 ## Configuration file
 
 You can use GbbConnect program to create (and test) configuration file (My Documents\Gbb Connect\Parameters.xml). Then file can be move as /root/GbbConnect/Parameters.xml on docker container.
+
+## How to run on Docker
+
+- Install DockerDesktop
+- Folk GbbConnect
+- run from GbbConnect directory: docker build .
