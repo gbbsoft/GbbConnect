@@ -60,5 +60,5 @@ You can use GbbConnect program to create (and test) configuration file (My Docum
 ## How to run on Docker
 
 - Install DockerDesktop
-- Fork GbbConnect: Git clone https://github.com/gbbsoft/GbbConnect
+- Clone GbbConnect: Git clone https://github.com/gbbsoft/GbbConnect
 - run from GbbConnect directory: docker build .
