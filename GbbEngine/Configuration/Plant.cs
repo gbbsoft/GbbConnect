@@ -34,6 +34,9 @@ namespace GbbEngine.Configuration
         [ObservableProperty]
         private long? m_SerialNumber;
 
+        [ObservableProperty]
+        private bool m_PriceLess0_DisconnectGrid=true;
+
 
 
         //[ObservableProperty]
@@ -112,6 +115,7 @@ namespace GbbEngine.Configuration
                 xml.WriteAttributeString("PortNo", PortNo.ToString());
             if (SerialNumber!=null)
                 xml.WriteAttributeString("SerialNumber", SerialNumber.ToString());
+            xml.WriteAttributeString("PriceLess0_DisconnectGrid", PriceLess0_DisconnectGrid ? "1" : "0");
 
             if (GbbVictronWeb_UserEmail!=null)
                 xml.WriteAttributeString("GbbVictronWeb_UserEmail", GbbVictronWeb_UserEmail);
@@ -170,6 +174,10 @@ namespace GbbEngine.Configuration
                 s = xml.GetAttribute("SerialNumber");
                 if (s != null && long.TryParse(s, out l))
                     ret.SerialNumber = l;
+
+                s = xml.GetAttribute("PriceLess0_DisconnectGrid");
+                if (s != null && int.TryParse(s, out i))
+                    ret.PriceLess0_DisconnectGrid = i!=0;
 
                 ret.GbbVictronWeb_UserEmail = xml.GetAttribute("GbbVictronWeb_UserEmail");
 

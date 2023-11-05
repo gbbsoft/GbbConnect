@@ -34,10 +34,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            groupBox2 = new GroupBox();
-            textBox4 = new TextBox();
+            groupBox5 = new GroupBox();
             plantsBindingSource = new BindingSource(components);
             ParametersBindingSource = new BindingSource(components);
+            label13 = new Label();
+            groupBox2 = new GroupBox();
+            textBox4 = new TextBox();
             label5 = new Label();
             textBox5 = new TextBox();
             textBox6 = new TextBox();
@@ -89,11 +91,13 @@
             StopServer_button = new Button();
             timer1 = new System.Windows.Forms.Timer(components);
             Version_label = new Label();
+            checkBox3 = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
-            groupBox2.SuspendLayout();
+            groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)plantsBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ParametersBindingSource).BeginInit();
+            groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)Plants_DataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)inverterInfoBindingSource).BeginInit();
@@ -121,6 +125,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(groupBox5);
             tabPage1.Controls.Add(groupBox2);
             tabPage1.Controls.Add(bindingNavigator2);
             tabPage1.Controls.Add(groupBox1);
@@ -134,6 +139,36 @@
             tabPage1.Text = "Plants";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(checkBox3);
+            groupBox5.Controls.Add(label13);
+            groupBox5.Location = new Point(6, 336);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(385, 100);
+            groupBox5.TabIndex = 9;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Price < 0";
+            // 
+            // plantsBindingSource
+            // 
+            plantsBindingSource.DataMember = "Plants";
+            plantsBindingSource.DataSource = ParametersBindingSource;
+            plantsBindingSource.AddingNew += plantsBindingSource_AddingNew;
+            // 
+            // ParametersBindingSource
+            // 
+            ParametersBindingSource.DataSource = typeof(GbbEngine.Configuration.Parameters);
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(6, 25);
+            label13.Name = "label13";
+            label13.Size = new Size(122, 15);
+            label13.TabIndex = 0;
+            label13.Text = "Disconnect from grid:";
+            // 
             // groupBox2
             // 
             groupBox2.Controls.Add(textBox4);
@@ -144,7 +179,7 @@
             groupBox2.Controls.Add(label6);
             groupBox2.Location = new Point(397, 215);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(385, 150);
+            groupBox2.Size = new Size(385, 115);
             groupBox2.TabIndex = 8;
             groupBox2.TabStop = false;
             groupBox2.Text = "GbbVictronWeb:";
@@ -156,16 +191,6 @@
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(178, 23);
             textBox4.TabIndex = 7;
-            // 
-            // plantsBindingSource
-            // 
-            plantsBindingSource.DataMember = "Plants";
-            plantsBindingSource.DataSource = ParametersBindingSource;
-            plantsBindingSource.AddingNew += plantsBindingSource_AddingNew;
-            // 
-            // ParametersBindingSource
-            // 
-            ParametersBindingSource.DataSource = typeof(GbbEngine.Configuration.Parameters);
             // 
             // label5
             // 
@@ -229,7 +254,7 @@
             groupBox1.Controls.Add(label4);
             groupBox1.Location = new Point(6, 215);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(385, 150);
+            groupBox1.Size = new Size(385, 115);
             groupBox1.TabIndex = 7;
             groupBox1.TabStop = false;
             groupBox1.Text = "Inverter Logger:";
@@ -600,7 +625,7 @@
             textBox7.ScrollBars = ScrollBars.Both;
             textBox7.Size = new Size(947, 427);
             textBox7.TabIndex = 3;
-            textBox7.Text = "Version 1.1\r\n- Change place for parameters.xml to MyDocuments/GbbConnect\r\nVersion 1.0\r\n- Suport for Deye SUN-xK-SG0xLP3";
+            textBox7.Text = "Version 1.2\r\n- Deye 3F: Disconnect from grid if Price<0\r\nVersion 1.1\r\n- Change place for parameters.xml to MyDocuments/GbbConnect\r\nVersion 1.0\r\n- Suport for Deye SUN-xK-SG0xLP3";
             // 
             // About_label2
             // 
@@ -679,6 +704,16 @@
             Version_label.TabIndex = 4;
             Version_label.Text = "Version:";
             // 
+            // checkBox3
+            // 
+            checkBox3.AutoSize = true;
+            checkBox3.DataBindings.Add(new Binding("Checked", plantsBindingSource, "PriceLess0_DisconnectGrid", true));
+            checkBox3.Location = new Point(174, 26);
+            checkBox3.Name = "checkBox3";
+            checkBox3.Size = new Size(15, 14);
+            checkBox3.TabIndex = 2;
+            checkBox3.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -698,10 +733,12 @@
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)plantsBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)ParametersBindingSource).EndInit();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)Plants_DataGridView).EndInit();
@@ -779,5 +816,8 @@
         private Label Version_label;
         private CheckBox checkBox2;
         private TextBox textBox7;
+        private GroupBox groupBox5;
+        private Label label13;
+        private CheckBox checkBox3;
     }
 }

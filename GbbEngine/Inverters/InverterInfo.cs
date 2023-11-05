@@ -63,6 +63,8 @@ namespace GbbEngine.Inverters
         public int? Deya_TimeOfUser_RegNo;
         public int? Deya_WorkMode_RegNo;
 
+        public int? Deye_LV1_RegNo;
+
         public enum Deya_Modes
         {
             i00_SellingFirst=0,
@@ -109,6 +111,8 @@ namespace GbbEngine.Inverters
                         MaxACharge = 108,
                         Deya_TimeOfUser_RegNo = 148,
                         Deya_WorkMode_RegNo = 142,
+
+                        Deye_LV1_RegNo = 356,
                     },
                     new InverterInfo(1, "Deya SUN-xK-SG0xLP1 - 1 fazowy (Beta)", Drivers.i000_SolarmanV5)
                     {

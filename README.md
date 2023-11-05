@@ -31,7 +31,9 @@ Manual how setup GbbConnect with Deye and GbbVictronWeb: [Manual](https://gbbvic
 
 ## History
 
-v1.0.1 - move configuration files (eg. Parameters.xml) to <MyDocuments>\GbbConnect\ directory
+v1.2 - Deya 3f: Disconnect from grid if Price<0 (option)
+
+v1.1 - move configuration files (eg. Parameters.xml) to <MyDocuments>\GbbConnect\ directory
 
 v1.0 - start version
 

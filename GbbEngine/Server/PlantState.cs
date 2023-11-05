@@ -50,6 +50,12 @@ namespace GbbEngine.Server
         public int? PrevDeyaMode {  get; set; }
 
 
+        /// <summary>
+        /// Previous Voltage in LV1
+        /// </summary>
+        public int? PrevDeyeLV1 {  get; set; }
+
+
 
         // ======================================
         // additional properties

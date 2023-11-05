@@ -16,6 +16,8 @@ public class Request
 
 public class Request_Scheduler
 {
+    public bool IsFastDischarge; // for internal use
+
     public int Hour { get; set; }
     public int FromMinute { get; set; } = 0;
     public int ToMinute { get; set; } = 59;

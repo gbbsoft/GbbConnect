@@ -479,6 +479,40 @@ namespace GbbEngine.Server
 
                 Dictionary<int, int> Values = new();
 
+                // Prive<0 -> disconnect from grid
+                if (Info.Deye_LV1_RegNo!=null)
+                {
+                    byte[] Tab = new byte[2];
+
+                    GbbConnectProtocol.Request_Scheduler? Curr = null;
+                    foreach(var itm in Schedulers)
+                        if (itm.Hour==nw.Hour)
+                        {
+                            Curr = itm;
+                            break;
+                        }
+                    if (Curr!=null && Curr.PriceLessZero!=0 && Plant.PriceLess0_DisconnectGrid)
+                    {
+                        // start Price<0 -> disconnect from grid
+
+                        // read prev value
+                        if (Plant.PlantState.PrevDeyeLV1 == null)
+                        {
+                            Plant.PlantState.PrevDeyeLV1 = await Get2Byte(Info.Deye_LV1_RegNo.Value, Values, Driver);
+                        }
+                        // change to 270 (max)
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deye_LV1_RegNo), Put2Byte(Tab, 0, 270));
+                    }
+                    else if (Plant.PlantState.PrevDeyeLV1 != null)
+                    {
+                        // revent to prev
+                        await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deye_LV1_RegNo), Put2Byte(Tab, 0, Plant.PlantState.PrevDeyeLV1.Value));
+                        Plant.PlantState.PrevDeyeLV1 = null;
+                    }
+                }
+
+
+
                 if (Info.Deya_TimeOfUser_RegNo != null)
                 {
 
