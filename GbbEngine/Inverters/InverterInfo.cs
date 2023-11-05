@@ -140,6 +140,8 @@ namespace GbbEngine.Inverters
                         MaxACharge = 210,
                         Deya_TimeOfUser_RegNo = 250,
                         Deya_WorkMode_RegNo = 244, // limit control function
+
+                        Deye_LV1_RegNo = 302,
                     },
 #if DEBUG
                     new InverterInfo(999, "Random", Drivers.i999_Random)
