@@ -31,7 +31,7 @@ Manual how setup GbbConnect with Deye and GbbVictronWeb: [Manual](https://gbbvic
 
 ## History
 
-v1.2 - Deya: Disconnect from grid if Price<0 (option)
+v1.2 - Deye: Disconnect from grid if Price<0 (option)
 
 v1.1 - move configuration files (eg. Parameters.xml) to <MyDocuments>\GbbConnect\ directory
 
@@ -77,3 +77,6 @@ You can use GbbConnect program to create (and test) configuration file (My Docum
   <Plant Version="1" Number="1" Name="MyPlant" InverterNumber="0" IsDisabled="0" PortNo="8899" PriceLess0_DisconnectGrid="1" GbbVictronWeb_UserEmail="<you email>" GbbVictronWeb_PlantId="<you PlantId>" GbbVictronWeb_PlantToken="<Your Token>" />
 </Parameters>
 ```
+
+- InverterNumber=0 -> Deye 3 phases
+- InverterNumber=1 -> Deye 1 phase
