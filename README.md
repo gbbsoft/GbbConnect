@@ -68,4 +68,12 @@ You can use GbbConnect program to create (and test) configuration file (My Docum
 - copy Parameters.xml: docker cp ./Parameters.xml gbbconnect:/root/GbbConnect/Parameters.xml
 - start container: docker start gbbconnect
 - make container always running: docker update --restart unless-stopped gbbconnect
-  
+
+## Sample Parameters.xml file
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters Version="1" GbbVictronWeb_Mqtt_Address="127.0.0.1" GbbVictronWeb_Mqtt_Port="8883" Server_AutoStart="0" IsVerboseLog="1" IsDriverLog="0" IsDriverLog2="0">
+  <Plant Version="1" Number="1" Name="MyPlant" InverterNumber="0" IsDisabled="0" PortNo="8899" PriceLess0_DisconnectGrid="1" GbbVictronWeb_UserEmail="<you email>" GbbVictronWeb_PlantId="<you PlantId>" GbbVictronWeb_PlantToken="<Your Token>" />
+</Parameters>
+```
