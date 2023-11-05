@@ -21,8 +21,12 @@ namespace GbbConnectConsole
             Console.WriteLine($"Log and statistic directory: {GbbEngine.Configuration.Parameters.OurGetUserBaseDirectory()}");
             Console.WriteLine();
 
-            // load parameters
             var FileName = GbbEngine.Configuration.Parameters.Parameters_GetFileName();
+            
+            // create directory
+            Directory.CreateDirectory(Path.GetDirectoryName(FileName)!);
+
+            // load parameters
             if (!File.Exists(FileName))
             {
                 Console.WriteLine("ERROR: No parameters.xml file!");
