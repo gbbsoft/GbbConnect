@@ -10,7 +10,7 @@ namespace GbbConnect
 {
     public partial class MainForm : Form, GbbLibSmall.IOurLog
     {
-        public string VERSION = "1.2";
+        public string VERSION = "1.2.1";
 
         public MainForm()
         {
