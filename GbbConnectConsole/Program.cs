@@ -17,6 +17,7 @@ namespace GbbConnectConsole
             Console.WriteLine("GbbConnectConsole by gbbsoft");
             Console.WriteLine();
 
+            Console.WriteLine($"Version:                   : {GbbEngine.Configuration.Parameters.APP_VERSION}");
             Console.WriteLine($"Parameters file            : {GbbEngine.Configuration.Parameters.Parameters_GetFileName()}");
             Console.WriteLine($"Log and statistic directory: {GbbEngine.Configuration.Parameters.OurGetUserBaseDirectory()}");
             Console.WriteLine();

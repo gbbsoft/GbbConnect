@@ -10,7 +10,7 @@ namespace GbbConnect
 {
     public partial class MainForm : Form, GbbLibSmall.IOurLog
     {
-        public string VERSION = "1.2.1";
+        
 
         public MainForm()
         {
@@ -45,7 +45,7 @@ namespace GbbConnect
                 else
                     this.About_label2.Text = this.About_label2.Text + " 2023 - {DateTime.Today.Year}";
 
-                this.Version_label.Text = $"Version: {VERSION}";
+                this.Version_label.Text = $"Version: {GbbEngine.Configuration.Parameters.APP_VERSION}";
             }
             catch (Exception ex)
             {
