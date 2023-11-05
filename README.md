@@ -63,8 +63,8 @@ You can use GbbConnect program to create (and test) configuration file (My Docum
 
 - Install docker (or DockerDesktop)
 - Clone GbbConnect: Git clone https://github.com/gbbsoft/GbbConnect
-- run from GbbConnect directory: docker build .
-- create container: docker container create -i -t --name gbbconnect [your image ID]
+- run from GbbConnect directory: docker build . -t gbbconnectimage
+- create container: docker container create -i -t --name gbbconnect gbbconnectimage
 - copy Parameters.xml: docker cp ./Parameters.xml gbbconnect:/root/GbbConnect/Parameters.xml
 - start container: docker start gbbconnect
 - make container always running: docker update --restart unless-stopped gbbconnect
