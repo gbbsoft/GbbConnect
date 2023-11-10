@@ -10,7 +10,7 @@ namespace GbbConnect
 {
     public partial class MainForm : Form, GbbLibSmall.IOurLog
     {
-        
+
 
         public MainForm()
         {

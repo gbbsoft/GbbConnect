@@ -321,7 +321,7 @@ namespace GbbEngine.Server
                     if (File.Exists(FileName))
                     {
                         string s = File.ReadAllText(FileName);
-                        string[] lines = s.Split("\r\n");
+                        string[] lines = s.Split(Environment.NewLine);
                         bool FirstLine = true;
                         foreach (var line in lines)
                         {

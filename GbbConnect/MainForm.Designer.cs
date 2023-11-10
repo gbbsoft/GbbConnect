@@ -35,6 +35,7 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             groupBox5 = new GroupBox();
+            checkBox3 = new CheckBox();
             plantsBindingSource = new BindingSource(components);
             ParametersBindingSource = new BindingSource(components);
             label13 = new Label();
@@ -91,7 +92,6 @@
             StopServer_button = new Button();
             timer1 = new System.Windows.Forms.Timer(components);
             Version_label = new Label();
-            checkBox3 = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox5.SuspendLayout();
@@ -149,6 +149,16 @@
             groupBox5.TabIndex = 9;
             groupBox5.TabStop = false;
             groupBox5.Text = "Price < 0";
+            // 
+            // checkBox3
+            // 
+            checkBox3.AutoSize = true;
+            checkBox3.DataBindings.Add(new Binding("Checked", plantsBindingSource, "PriceLess0_DisconnectGrid", true));
+            checkBox3.Location = new Point(174, 26);
+            checkBox3.Name = "checkBox3";
+            checkBox3.Size = new Size(15, 14);
+            checkBox3.TabIndex = 2;
+            checkBox3.UseVisualStyleBackColor = true;
             // 
             // plantsBindingSource
             // 
@@ -625,7 +635,7 @@
             textBox7.ScrollBars = ScrollBars.Both;
             textBox7.Size = new Size(947, 427);
             textBox7.TabIndex = 3;
-            textBox7.Text = "Version 1.2\r\n- Deye 3F: Disconnect from grid if Price<0\r\nVersion 1.1\r\n- Change place for parameters.xml to MyDocuments/GbbConnect\r\nVersion 1.0\r\n- Suport for Deye SUN-xK-SG0xLP3";
+            textBox7.Text = resources.GetString("textBox7.Text");
             // 
             // About_label2
             // 
@@ -703,16 +713,6 @@
             Version_label.Size = new Size(104, 19);
             Version_label.TabIndex = 4;
             Version_label.Text = "Version:";
-            // 
-            // checkBox3
-            // 
-            checkBox3.AutoSize = true;
-            checkBox3.DataBindings.Add(new Binding("Checked", plantsBindingSource, "PriceLess0_DisconnectGrid", true));
-            checkBox3.Location = new Point(174, 26);
-            checkBox3.Name = "checkBox3";
-            checkBox3.Size = new Size(15, 14);
-            checkBox3.TabIndex = 2;
-            checkBox3.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
