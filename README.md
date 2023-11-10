@@ -31,6 +31,8 @@ Manual how setup GbbConnect with Deye and GbbVictronWeb: [Manual](https://gbbvic
 
 ## History
 
+v1.2.2 - BUG: Linux version didn't send statistic to GbbVictronWeb
+
 v1.2 - Deye: Disconnect from grid if Price<0 (option)
 
 v1.1 - move configuration files (eg. Parameters.xml) to <MyDocuments>\GbbConnect\ directory
