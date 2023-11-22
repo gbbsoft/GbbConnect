@@ -59,4 +59,10 @@ public class Response_Statistic
     public decimal? LoadskWh { get; set; }
     public decimal? PVProdkWh { get; set; }
 
+
+    public decimal? ExtraLoads_EV { get; set;}
+    public decimal? ExtraLoads_HeatingPump { get; set;}
+    public decimal? ExtraLoads_Generic1 { get; set;}
+    public decimal? ExtraLoads_Generic2 { get; set;}
+
 }
