@@ -74,7 +74,8 @@ namespace GbbEngine.Server
                 .WithTlsOptions(new MqttClientTlsOptions()
                 {
                     UseTls = true,
-                    IgnoreCertificateChainErrors = true,
+                    // 2023-12-15: nie ma juz potrzeby
+                    //IgnoreCertificateChainErrors = true,
                 })
                 .WithTcpServer(Parameters.GbbVictronWeb_Mqtt_Address, Parameters.GbbVictronWeb_Mqtt_Port)
                 .WithCredentials(plant.GbbVictronWeb_PlantId.ToString(), plant.GbbVictronWeb_PlantToken);
