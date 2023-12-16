@@ -70,6 +70,7 @@ namespace GbbEngine.Server
         private async Task ConnectToMqtt(Parameters Parameters, Plant plant, IMqttClient client, CancellationToken ct, IOurLog log)
         {
             var b = new MqttClientOptionsBuilder()
+                .WithClientId($"GbbConnect_{plant.GbbVictronWeb_PlantId.ToString()}")
                 .WithCleanSession(true)
                 .WithTlsOptions(new MqttClientTlsOptions()
                 {
