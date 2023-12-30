@@ -25,7 +25,7 @@ public class Request_Scheduler
     public long? InputLimitW { get; set; }
     public int PriceLessZero { get; set; }
 
-    public string? Operation { get; set; }
+    public string? Operation { get; set; } // "Normal", "Discharge", "DisableCharge", "Charge"
     public decimal? SOC { get; set; }
 
 
