@@ -170,7 +170,7 @@ namespace GbbConnect
                                 {
 
                                     byte[] answer = { 0, 66 };
-                                    driver.ReadHoldingRegister(1, 1, (ushort)RegisterNo_numericUpDown.Value, 1, ref answer);
+                                    driver.ReadHoldingRegister(1, 1, (ushort)RegisterNo_numericUpDown.Value, 2, ref answer);
                                     Log($"Value of {RegisterNo_numericUpDown.Value}: {answer[0] * 256 + answer[1]}");
                                 }
                                 finally
