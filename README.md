@@ -77,7 +77,7 @@ You can use GbbConnect program to create (and test) configuration file (My Docum
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <Parameters Version="1" GbbVictronWeb_Mqtt_Address="gbboptimizer2.gbbsoft.pl" GbbVictronWeb_Mqtt_Port="8883" Server_AutoStart="1" IsVerboseLog="1" IsDriverLog="0" IsDriverLog2="0">
-  <Plant Version="1" Number="1" Name="MyPlant" InverterNumber="0" IsDisabled="0" AddressIP="<Deye ip address>" PortNo="8899" PriceLess0_DisconnectGrid="1" GbbVictronWeb_UserEmail="<your email>" GbbVictronWeb_PlantId="<your PlantId>" GbbVictronWeb_PlantToken="<Your Token>" />
+  <Plant Version="1" Number="1" Name="MyPlant" InverterNumber="0" IsDisabled="0" AddressIP="<Deye dongle ip address>" PortNo="8899" SerialNumber=<Deye dongle SN>" PriceLess0_DisconnectGrid="1" GbbVictronWeb_UserEmail="<your email>" GbbVictronWeb_PlantId="<your PlantId>" GbbVictronWeb_PlantToken="<Your Token>" />
 </Parameters>
 ```
 
