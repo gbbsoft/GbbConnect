@@ -105,8 +105,8 @@ namespace GbbEngine.Server
                         {
                             case InverterInfo.Drivers.i000_SolarmanV5:
                                 {
-                                    if (Plant.AddressIP == null) throw new ApplicationException("Missing Plant Address!");
-                                    if (Plant.PortNo == null) throw new ApplicationException("Missing Plant PortNumber!");
+                                    if (Plant.AddressIP == null) throw new ApplicationException("Missing Plant AddressIp!");
+                                    if (Plant.PortNo == null) throw new ApplicationException("Missing Plant PortNo!");
                                     if (Plant.SerialNumber == null) throw new ApplicationException("Missing Plant SerialNumber!");
 
                                     var drv = new SolarmanV5Driver(Parameters, Plant.AddressIP, Plant.PortNo.Value, Plant.SerialNumber.Value, log);
