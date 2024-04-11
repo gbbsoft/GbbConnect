@@ -172,5 +172,6 @@ Version 1.1
 - Change place for parameters.xml to MyDocuments/GbbConnect
 Version 1.0
 - Suport for Deye SUN-xK-SG0xLP3</value>
+    <comment>@Invariant</comment>
   </data>
 </root>

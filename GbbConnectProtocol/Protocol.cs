@@ -27,6 +27,7 @@ public class Request_Scheduler
 
     public string? Operation { get; set; } // "Normal", "Discharge", "DisableCharge", "Charge"
     public decimal? SOC { get; set; }
+    public decimal? V {  get; set; }
 
 
 }
