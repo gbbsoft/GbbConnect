@@ -52,8 +52,13 @@ namespace GbbEngine.Server
             Deya_TimeOfUse? Last = null;
             int? LastToMinute = null;
 
-            foreach (var itm in Schedulers)
+            // start from current hour
+            int hour = DateTime.Now.Hour;
+
+            for(int i = 0; i<24; i++)
             {
+                var itm = Schedulers[(hour + i)%24];
+
                 Deya_TimeOfUse Next = new();
 
                 if (itm.FromMinute == 0 && LastToMinute != null)
@@ -113,11 +118,6 @@ namespace GbbEngine.Server
                 if (itm.ToMinute != 59)
                     LastToMinute = itm.ToMinute;
             }
-
-            // join first and last
-            if (Last != null && ret.Count > 1 && Last.Equals(ret[0]))
-                ret.RemoveAt(0);
-
 
             return ret;
 
