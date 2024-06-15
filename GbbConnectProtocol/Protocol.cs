@@ -21,6 +21,7 @@ public class Request_Scheduler
     public int Hour { get; set; }
     public int FromMinute { get; set; } = 0;
     public int ToMinute { get; set; } = 59;
+    public long? DischargeLimitW { get; set; }
     public long? ChargeLimitW { get; set; }
     public long? InputLimitW { get; set; }
     public int PriceLessZero { get; set; }
