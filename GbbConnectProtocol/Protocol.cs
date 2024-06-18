@@ -16,19 +16,14 @@ public class Request
 
 public class Request_Scheduler
 {
-    public bool IsFastDischarge; // for internal use
-
     public int Hour { get; set; }
     public int FromMinute { get; set; } = 0;
     public int ToMinute { get; set; } = 59;
-    public long? DischargeLimitW { get; set; }
     public long? ChargeLimitW { get; set; }
-    public long? InputLimitW { get; set; }
     public int PriceLessZero { get; set; }
 
     public string? Operation { get; set; } // "Normal", "Discharge", "DisableCharge", "Charge"
     public decimal? SOC { get; set; }
-    public decimal? V {  get; set; }
 
 
 }
