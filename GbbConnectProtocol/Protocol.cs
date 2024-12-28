@@ -16,6 +16,9 @@ public class Request
 
 public class Request_Scheduler
 {
+    /// <summary>
+    /// This is only hour. Otherwise use HourDecimal!
+    /// </summary>
     public int Hour { get; set; }
     public int FromMinute { get; set; } = 0;
     public int ToMinute { get; set; } = 59;
