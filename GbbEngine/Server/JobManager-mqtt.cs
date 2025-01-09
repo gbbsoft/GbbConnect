@@ -7,8 +7,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using GbbEngine.Configuration;
 using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Server;
 using GbbConnectProtocol;
 using GbbLibSmall;
 
@@ -16,7 +14,7 @@ namespace GbbEngine.Server
 {
     public partial class JobManager
     {
-        private static MqttFactory mqttFactory = new MqttFactory();
+        private static MqttClientFactory mqttFactory = new();
 
         private async void OurMqttService(Configuration.Parameters Parameters, CancellationToken ct, IOurLog log)
         {
