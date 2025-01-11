@@ -60,7 +60,7 @@ namespace GbbEngine.Server
         // ======================================
         // additional properties
 
-        public MQTTnet.Client.IMqttClient? MqttClient;
+        public MQTTnet.IMqttClient? MqttClient;
 
         // ======================================
         // cache of today file

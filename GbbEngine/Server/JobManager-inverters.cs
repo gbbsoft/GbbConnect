@@ -546,7 +546,7 @@ namespace GbbEngine.Server
 
                         byte[] TabTime = new byte[2*6];
                         byte[] TabPower = new byte[2*6];
-                        bool IsTabPower = false;
+                        //bool IsTabPower = false;
                         byte[] TabSOC = new byte[2*6];
                         byte[] TabGridCharge = new byte[2*6];
                         int Pos = 0;
@@ -574,7 +574,7 @@ namespace GbbEngine.Server
                             {
                                 // await Driver.WriteMultipleRegister(UNIT_NO, (ushort)(Info.Deya_TimeOfUser_RegNo + Pos + Offset), Put2Byte(Tab, 0, itm.Power.Value));
                                 Put2Byte(TabPower, Pos * 2, itm.Power.Value);
-                                IsTabPower = true;
+                                //IsTabPower = true;
                             }
                             else
                                 Put2Byte(TabPower, Pos * 2, 0);

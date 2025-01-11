@@ -243,10 +243,10 @@ namespace GbbEngine.Server
 
             try
             {
-                var seg = arg.ApplicationMessage.PayloadSegment;
+                var seg = arg.ApplicationMessage.ConvertPayloadToString();
                 if (Parameters.IsVerboseLog)
                 {
-                    log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Received request: {Encoding.UTF8.GetString(seg)}");
+                    log.OurLog(LogLevel.Information, $"{Plant.Name}: Mqtt: Received request: {seg}");
                 }
 
 
