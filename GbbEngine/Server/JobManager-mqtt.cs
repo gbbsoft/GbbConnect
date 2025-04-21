@@ -138,9 +138,9 @@ namespace GbbEngine.Server
                             if (plant.PlantState != null && plant.PlantState.MqttClient != null
                                 && !plant.PlantState.MqttClient.IsConnected)
                             {
-                                log.OurLog(LogLevel.Information, $"{plant.Name}: Mqtt: Reconect");
+                                log.OurLog(LogLevel.Information, $"{plant.Name}: Mqtt: Reconnect");
                                 await ConnectToMqtt(Parameters, plant, plant.PlantState.MqttClient, ct, log);
-                                log.OurLog(LogLevel.Information, $"{plant.Name}: Mqtt: Reconected");
+                                log.OurLog(LogLevel.Information, $"{plant.Name}: Mqtt: Reconnected");
                             }
                         }
                         catch (TaskCanceledException)
