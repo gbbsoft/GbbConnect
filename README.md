@@ -1,4 +1,6 @@
 
+# Project is closed!
+
 # GbbConnect
 
 Program to connect inverters (eg: Deye) and program [GbbVictronWeb.gbbsoft.pl.](https://gbbvictronweb.gbbsoft.pl/)
